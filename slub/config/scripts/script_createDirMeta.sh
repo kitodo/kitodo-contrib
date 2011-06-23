@@ -9,6 +9,14 @@ source `dirname $0`/errorlevel.sh
 # Fetch directory name from command-line argument
 Directory="$1"
 
+# Exit with error if no parameter has been given
+if [ -n $1 ]; then
+    logger -p user.info "$0: No directory given."
+    exit 1
+fi
+
+
+
 # Assemble options 
 Verbose=
 Filemode="-m 0775"
@@ -28,5 +36,5 @@ if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
     logger -p user.info ${Out}
 fi
 
-# Call errorlevel function (log error to syslog)
+# Call errorlevel function (signal error to syslog)
 errorlevel
