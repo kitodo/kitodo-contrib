@@ -22,7 +22,7 @@ fi
 ProcessId=`expr match "$Directory" '[a-zA-Z\/]*\([0-9]\+\)'`
 
 # Exit if process is blacklisted
-if grep -q $ProcessId $Blacklist; then
+if grep -qsx $ProcessId $Blacklist; then
     logger -p user.info "$0 Process $ProcessId is on the black list"
     exit 1
 fi
