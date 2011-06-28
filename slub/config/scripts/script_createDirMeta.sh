@@ -35,8 +35,12 @@ if [ ${Debug} -eq 1 ]; then
     Verbose="-v"
 fi
 
-# Call mkdir and capture output
-Out=`/bin/mkdir ${Verbose} ${Filemode} "${Directory}" 2>&1`
+# Call mkdir, log command and capture output
+Mkdir="/bin/mkdir ${Verbose} ${Filemode} ${Directory}"
+if [ $Debug -eq 1 ]; then
+    logger -p user.info "${Mkdir}"
+fi
+Out=`${Mkdir} 2>&1`
 
 # Get last command error level
 Errorlevel=$?
