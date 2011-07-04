@@ -14,7 +14,7 @@ Directory="$1"
 
 # Exit with error if no parameter has been given
 if [ -z "$1" ]; then
-    logger -p user.info "$0: No directory given."
+    logger -p user.info -t $0 "No directory given."
     exit 1
 fi
 
@@ -23,7 +23,7 @@ ProcessId=`expr match "$Directory" '[a-zA-Z\/]*\([0-9]\+\)'`
 
 # Exit if process is blacklisted
 if grep -qsx $ProcessId $Blacklist; then
-    logger -p user.info "$0 Process $ProcessId is on the black list"
+    logger -p user.info -t $0 "Process $ProcessId is on the black list"
     exit 1
 fi
 
@@ -38,7 +38,7 @@ fi
 # Call mkdir, log command and capture output
 Mkdir="/bin/mkdir ${Verbose} ${Filemode} ${Directory}"
 if [ $Debug -eq 1 ]; then
-    logger -p user.info "${Mkdir}"
+    logger -p user.info -t $0 "${Mkdir}"
 fi
 Out=`${Mkdir} 2>&1`
 
@@ -47,7 +47,7 @@ Errorlevel=$?
 
 # Log mkdir output if Debug is enabled
 if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
-    logger -p user.info ${Out}
+    logger -p user.info -t $0 ${Out}
 fi
 
 # Call errorlevel function (signal error to syslog)
