@@ -19,7 +19,7 @@ if [ -z "$1" ]; then
 fi
 
 # Extract first number sequence as Goobi process ID
-ProcessId=`expr match "$Directory" '[a-zA-Z\/]*\([0-9]\+\)'`
+ProcessId=`expr match "$Directory" '[a-zA-Z0-9\/]*\/\([0-9]\+\)'`
 
 # Exit if process is blacklisted
 if grep -qsx $ProcessId $Blacklist; then
