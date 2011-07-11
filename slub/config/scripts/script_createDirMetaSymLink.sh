@@ -6,12 +6,18 @@ Debug=1
 # Include error level handling
 source `dirname $0`/errorlevel.sh
 
-# Fetch directory name from command-line argument and remove trailing slash
-Symlink=${1%/}
-
 # Exit with error if no parameter has been given
 if [ -z "$1" ]; then
     logger -p user.info -t $0 "No directory given."
+    exit 1
+fi
+
+# Fetch directory name from command-line argument and remove trailing slash
+Symlink=${1%/}
+
+# Exit if symlink exists
+if [ -L $Symlink ]; then
+    logger -p user.info -t $0 "Target already exists."
     exit 1
 fi
 
