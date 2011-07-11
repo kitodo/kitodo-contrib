@@ -6,8 +6,8 @@ Debug=1
 # Include error level handling
 source `dirname $0`/errorlevel.sh
 
-# Fetch directory name from command-line argument
-Symlink="$1"
+# Fetch directory name from command-line argument and remove trailing slash
+Symlink=${1%/}
 
 # Exit with error if no parameter has been given
 if [ -z "$1" ]; then
