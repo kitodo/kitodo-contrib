@@ -39,7 +39,7 @@ Area="partitions/"`expr $ProcessId / 10000`
 BaseDirectory=${Symlink%$ProcessId*}
 
 # Determine target directory
-TargetDirectory=${BaseDirectory}${Area}
+TargetDirectory=${BaseDirectory}${Area}/${ProcessId}
 
 # Build commands
 Mkdir="/bin/mkdir -p ${Verbose} ${Filemode} ${TargetDirectory}"
