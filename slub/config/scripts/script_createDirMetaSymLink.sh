@@ -43,7 +43,7 @@ TargetDirectory=${BaseDirectory}${Area}/${ProcessId}
 
 # Build commands
 Mkdir="/bin/mkdir -p ${Verbose} ${Filemode} ${TargetDirectory}"
-Ln="/bin/ln -s ${TargetDirectory} ${Symlink}"
+Ln="/bin/ln ${Verbose} -s ${TargetDirectory} ${Symlink}"
 
 # Call mkdir, log command and capture output
 if [ $Debug -eq 1 ]; then
@@ -53,7 +53,7 @@ Out=`${Mkdir} 2>&1`
 
 # Log mkdir output if Debug is enabled
 if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
-    logger -p user.info -t $0 ${Out}
+    logger -p user.info -t $0 "${Out}"
 fi
 
 # Get last command error level
@@ -70,7 +70,7 @@ Out=`${Ln} 2>&1`
 
 # Log ln output if Debug is enabled
 if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
-    logger -p user.info -t $0 ${Out}
+    logger -p user.info -t $0 "${Out}"
 fi
 
 # Get last command error level
