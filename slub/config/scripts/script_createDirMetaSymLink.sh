@@ -27,7 +27,7 @@ fi
 ProcessId=`expr match "$Symlink" '[a-zA-Z0-9\/]*\/\([0-9]\+\)'`
 
 # Determine storage area
-Area="bereich/"`expr $ProcessId / 10000`
+Area="partitions/"`expr $ProcessId / 10000`
 
 # Base directory is Symlink path without Goobi process ID and following parts
 BaseDirectory=${Symlink%$ProcessId*}
