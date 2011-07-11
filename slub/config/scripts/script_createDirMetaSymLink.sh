@@ -56,6 +56,12 @@ if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
     logger -p user.info -t $0 ${Out}
 fi
 
+# Get last command error level
+Errorlevel=$?
+
+# Call errorlevel function (signal error to syslog)
+errorlevel
+
 # Call ln, log command and capture output
 if [ $Debug -eq 1 ]; then
     logger -p user.info -t $0 "${Ln}"
