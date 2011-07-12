@@ -30,10 +30,12 @@ ProcessId=`expr match "$Directory" '[a-zA-Z0-9\/]*\/\([0-9]\+\)'`
 BaseDirectory=${Directory%/$ProcessId*}
 
 # Determine storage partition
-PartitionDirectory=${BaseDirectory}"/partitions/"`expr $ProcessId / 10000`"/"${ProcessId}
+PartitionNumber=`expr $ProcessId / 10000`
+PartitionDirectory=${BaseDirectory}/partitions/${PartitionNumber}/${ProcessId}
 
 # Determine Symlink
 Symlink=${BaseDirectory}/${ProcessId}
+SymlinkTarget=./partitions/${PartitionNumber}/${ProcessId}
 
 
 # Create partition directory
@@ -63,7 +65,7 @@ fi
 # Create symlink to partition directory
 if [ ! -L ${Symlink} ]; then
 
-    Ln="/bin/ln ${Verbose} -s ${PartitionDirectory} ${Symlink}"
+    Ln="/bin/ln ${Verbose} -s ${SymlinkTarget} ${Symlink}"
 
     # Call ln, log command and capture output
     if [ $Debug -eq 1 ]; then
