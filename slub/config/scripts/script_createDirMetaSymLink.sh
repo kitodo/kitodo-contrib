@@ -49,13 +49,13 @@ if [ ! -d ${PartitionDirectory} ]; then
     fi
     Out=`${Mkdir} 2>&1`
 
+    # Get last command error level
+    Errorlevel=$?
+
     # Log mkdir output if Debug is enabled
     if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
         logger -p user.info -t $0 "${Out}"
     fi
-
-    # Get last command error level
-    Errorlevel=$?
 
     # Call errorlevel function (signal error to syslog)
     errorlevel
@@ -73,13 +73,13 @@ if [ ! -L ${Symlink} ]; then
     fi
     Out=`${Ln} 2>&1`
 
+    # Get last command error level
+    Errorlevel=$?
+
     # Log ln output if Debug is enabled
     if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
         logger -p user.info -t $0 "${Out}"
     fi
-
-    # Get last command error level
-    Errorlevel=$?
 
     # Call errorlevel function (signal error to syslog)
     errorlevel
@@ -98,13 +98,13 @@ if [ ! -d ${Directory} ]; then
     fi
     Out=`${Mkdir} 2>&1`
 
+    # Get last command error level
+    Errorlevel=$?
+
     # Log mkdir output if Debug is enabled
     if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
         logger -p user.info -t $0 "${Out}"
     fi
-
-    # Get last command error level
-    Errorlevel=$?
 
     # Call errorlevel function (signal error to syslog)
     errorlevel
