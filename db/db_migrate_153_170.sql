@@ -39,9 +39,7 @@ delete from benutzergruppenmitgliedschaft
 alter table benutzergruppenmitgliedschaft
 	drop BenutzerGruppenMitgliedschaftID,
 	modify BenutzerID int(11) not null,
-	modify BenutzerGruppenID int(11);
-
-alter table benutzergruppenmitgliedschaft
+	modify BenutzerGruppenID int(11),
 	add primary key (BenutzerID,BenutzerGruppenID);
 
 drop table datentypen;
