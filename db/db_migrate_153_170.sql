@@ -10,7 +10,11 @@ alter table MetadatenKonfigurationen
 	rename to metadatenkonfigurationen;
 
 alter table Projekte
-	rename to projekte;
+	rename to projekte,
+	add column startDate datetime default null,
+	add column endDate datetime default null,
+	add column numberOfPages int(11) default null,
+	add column numberOfVolumes int(11) default null;
 
 alter table benutzer
 	modify BenutzerID int(11) not null auto_increment,
