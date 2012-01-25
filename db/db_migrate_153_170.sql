@@ -50,6 +50,7 @@ alter table ldapgruppen
 	drop column guid;
 
 alter table prozesse
+	modify ProzesseID int(11) not null auto_increment,
 	drop column EigenschaftenID,
 	modify IstTemplate bit(1) default null,
 	modify inAuswahllisteAnzeigen bit(1) default null,
@@ -79,6 +80,7 @@ alter table schritte
 	modify typExportDMS bit(1) default null,
 	modify typExportRus bit(1) default null,
 	modify typImagesSchreiben bit(1) default null,
+	modify typImagesLesen bit(1) default null,
 	modify typImportFileUpload bit(1) default null,
 	modify typMetadaten bit(1) default null,
 	drop column beimAnnehmenAbschliessen,
