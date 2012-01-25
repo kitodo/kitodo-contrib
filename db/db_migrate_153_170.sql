@@ -31,14 +31,15 @@ alter table benutzergruppen
 	change Berechtigung berechtigung int(11) default null,
 	change Titel titel varchar(255) default null;
 
+delete from benutzergruppenmitgliedschaft
+	where BenutzerGruppenMitgliedschaftID in
+		(select BenutzerGruppenMitgliedschaftID from 
+			(select BenutzerGruppenMitgliedschaftID from benutzergruppenmitgliedschaft group by BenutzerID, BenutzerGruppenID having count(*) > 1) subsubquery);
+
 alter table benutzergruppenmitgliedschaft
 	drop BenutzerGruppenMitgliedschaftID,
 	modify BenutzerID int(11) not null,
 	modify BenutzerGruppenID int(11);
-
-delete from benutzergruppenmitgliedschaft
-	where BenutzerID in
-		(select BenutzerID from (select BenutzerID from benutzergruppenmitgliedschaft group by BenutzerID having count(BenutzerGruppenID) > 1) subsubquery);
 
 alter table benutzergruppenmitgliedschaft
 	add primary key (BenutzerID,BenutzerGruppenID);
