@@ -87,11 +87,21 @@ alter table schritte
 	drop column Typ,
 	drop column EigenschaftenID;
 
+delete from schritteberechtigtebenutzer
+	where schritteberechtigtebenutzerID in
+		(select schritteberechtigtebenutzerID from 
+			(select schritteberechtigtebenutzerID from schritteberechtigtebenutzer group by schritteID, BenutzerID having count(*) > 1) subsubquery);
+
 alter table schritteberechtigtebenutzer
 	modify schritteID int(11) not null,
 	modify BenutzerID int(11) not null,
 	drop column schritteberechtigtebenutzerID,
 	add primary key (schritteID, BenutzerID);
+
+delete from schritteberechtigtegruppen
+	where schritteberechtigtegruppenID in
+		(select schritteberechtigtegruppenID from 
+			(select schritteberechtigtegruppenID from schritteberechtigtegruppen group by schritteID, BenutzerGruppenID having count(*) > 1) subsubquery);
 
 alter table schritteberechtigtegruppen
 	modify schritteID int(11) not null,
