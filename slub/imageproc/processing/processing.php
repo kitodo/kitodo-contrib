@@ -131,7 +131,7 @@ foreach( $clients as $client ) {
 
 						$i++;
 
-						exec( 'convert ' . $lock . '/' . $directory . '_tif/' . $tiff . ' -quality 75 -strip ' . $lock . '/' . $directory . '_tif/jpegs/' . $tiff . '.original.jpg', $output );
+						exec( 'convert ' . $lock . '/' . $directory . '_tif/' . $tiff . ' -quiet -quality 75 -strip ' . $lock . '/' . $directory . '_tif/jpegs/' . $tiff . '.original.jpg', $output );
 
 						exec( 'convert ' . $lock . '/' . $directory . '_tif/jpegs/' . $tiff . '.original.jpg -scale 500 -quality 75 -strip ' . $lock . '/' . $directory . '_tif/jpegs/' . $tiff . '.small.jpg', $output );
 
