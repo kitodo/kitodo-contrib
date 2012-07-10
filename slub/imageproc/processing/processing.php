@@ -5,6 +5,7 @@ $bases = array (
 	'/mnt/goobi2',
 	'/mnt/goobi3',
 	'/mnt/goobi4',
+	'/mnt/goobi5',
 );
 
 $scriptpath = dirname(__FILE__);

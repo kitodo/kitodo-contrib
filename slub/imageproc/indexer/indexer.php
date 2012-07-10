@@ -5,18 +5,21 @@ $roots = array (
 	'/mnt/goobi2',
 	'/mnt/goobi3',
 	'/mnt/goobi4',
+	'/mnt/goobi5',
 );
 
 $pids = array (
 	'typo3' => 4152,
 	'hmtl' => 4152,
 	'ubl' => 5939,
+	'ubf' => 7037,
 );
 
 $cores = array (
 	'typo3' => 1,
 	'hmtl' => 1,
 	'ubl' => 2,
+	'ubf' => 4,
 );
 
 foreach ($roots as $root) {
@@ -228,6 +231,30 @@ function fixURN($file) {
 	}
 
 	file_put_contents($file, $xml->asXML());
+
+}
+
+function cleanMETS($file) {
+
+	$xml = new DOMDocument();
+
+	$xml->load($file);
+
+	$xpath = new DOMXPath($xml);
+
+	$xpath->registerNamespace('mets', 'http://www.loc.gov/METS/');
+
+	$xpath->registerNamespace('mods', 'http://www.loc.gov/mods/v3');
+
+	foreach ($xpath->query('//mets:fileSec/mets:fileGrp[@USE="LOCAL"]') as $node) {
+
+		$node->parentNode->removeChild($node);
+
+	}
+
+	// TODO: Delete fptr as well!
+
+	file_put_contents($file, $xml->saveXML());
 
 }
 
