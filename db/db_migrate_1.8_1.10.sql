@@ -2,12 +2,12 @@
 /*!40101 SET character_set_client = utf8 */;
 
 alter table benutzer
-	add column ldaplogin VARCHAR(255) null default null;
+	add column ldaplogin VARCHAR(255);
 
 create table dockets (
 	docketID INT(11) not null auto_increment,
-	name VARCHAR(255) default null,
-	file VARCHAR(255) default null,
+	name VARCHAR(255),
+	file VARCHAR(255),
 	primary key (docketID)
 );
 
@@ -15,18 +15,18 @@ insert into dockets
 	(docketID, name, file) values (1, 'default', 'docket.xsl');
 
 alter table projectfilegroups
-	add column folder VARCHAR(255) null default null;
+	add column folder VARCHAR(255);
 
 alter table projekte
-	add column projectIsArchived BIT null default false;
+	add column projectIsArchived BIT default false;
 
 update projekte
 	set projectIsArchived = false;
 
 alter table prozesse
-	modify wikifield TEXT null default null,
-	add column batchID INT(11) null,
-	add column docketID INT(11) null,
+	modify wikifield TEXT,
+	add column batchID INT(11),
+	add column docketID INT(11),
 	add index docket (docketID ASC),
 	add index batch (batchID ASC);
 
@@ -34,9 +34,9 @@ update prozesse
 	set docketID=1;
 
 alter table schritte
-	add column batchStep BIT null default false,
-	add column stepPlugin VARCHAR(255) null default null,
-	add column validatorPlugin VARCHAR(255) null default null;
+	add column batchStep BIT default false,
+	add column stepPlugin VARCHAR(255),
+	add column validatorPlugin VARCHAR(255);
 
 
 /* Move records from table schritteeigenschaften to table prozesseeigenschaften */
