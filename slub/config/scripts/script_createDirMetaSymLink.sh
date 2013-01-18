@@ -37,57 +37,59 @@ PartitionDirectory=${BaseDirectory}/partitions/${PartitionNumber}/${ProcessId}
 Symlink=${BaseDirectory}/${ProcessId}
 SymlinkTarget=./partitions/${PartitionNumber}/${ProcessId}
 
+# Skip symlink creation if there is a directory with the same name already
+if [ ! -d ${Symlink} ] ; then
 
 # Create partition directory
-if [ ! -d ${PartitionDirectory} ]; then
+	if [ ! -d ${PartitionDirectory} ]; then
 
-    Mkdir="/bin/mkdir -p ${Verbose} ${Filemode} ${PartitionDirectory}"
+	    Mkdir="/bin/mkdir -p ${Verbose} ${Filemode} ${PartitionDirectory}"
 
-    # Call mkdir, log command and capture output
-    if [ $Debug -eq 1 ]; then
-        logger -p user.info -t $0 "${Mkdir}"
-    fi
-    Out=`${Mkdir} 2>&1`
+	    # Call mkdir, log command and capture output
+	    if [ $Debug -eq 1 ]; then
+		logger -p user.info -t $0 "${Mkdir}"
+	    fi
+	    Out=`${Mkdir} 2>&1`
 
-    # Get last command error level
-    Errorlevel=$?
+	    # Get last command error level
+	    Errorlevel=$?
 
-    # Log mkdir output if Debug is enabled
-    if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
-        logger -p user.info -t $0 "${Out}"
-    fi
+	    # Log mkdir output if Debug is enabled
+	    if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
+		logger -p user.info -t $0 "${Out}"
+	    fi
 
-    # Call errorlevel function (signal error to syslog)
-    errorlevel
+	    # Call errorlevel function (signal error to syslog)
+	    errorlevel
 
-fi
+	fi
 
 # Create symlink to partition directory
-if [ ! -L ${Symlink} ]; then
+	if [ ! -L ${Symlink} ]; then
 
-    Ln="/bin/ln ${Verbose} -s ${SymlinkTarget} ${Symlink}"
+	    Ln="/bin/ln ${Verbose} -s ${SymlinkTarget} ${Symlink}"
 
-    # Call ln, log command and capture output
-    if [ $Debug -eq 1 ]; then
-        logger -p user.info -t $0 "${Ln}"
-    fi
-    Out=`${Ln} 2>&1`
+	    # Call ln, log command and capture output
+	    if [ $Debug -eq 1 ]; then
+		logger -p user.info -t $0 "${Ln}"
+	    fi
+	    Out=`${Ln} 2>&1`
 
-    # Get last command error level
-    Errorlevel=$?
+	    # Get last command error level
+	    Errorlevel=$?
 
-    # Log ln output if Debug is enabled
-    if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
-        logger -p user.info -t $0 "${Out}"
-    fi
+	    # Log ln output if Debug is enabled
+	    if [ ${Debug} -eq 1 ] && [ -n "${Out}" ] ; then
+		logger -p user.info -t $0 "${Out}"
+	    fi
 
-    # Call errorlevel function (signal error to syslog)
-    errorlevel
+	    # Call errorlevel function (signal error to syslog)
+	    errorlevel
 
+	fi
 fi
 
-
-# Create final directory through symlink
+# Create final directory through symlink (or existing base directory)
 if [ ! -d ${Directory} ]; then
 
     Mkdir="/bin/mkdir -p ${Verbose} ${Filemode} ${Directory}"
