@@ -53,7 +53,7 @@ select
 	s.ProzesseID
 from
 	schritteeigenschaften se, schritte s
-where se.SchritteID = s.SchritteID
+where se.SchritteID = s.SchritteID;
 
 truncate schritteeigenschaften;
 
