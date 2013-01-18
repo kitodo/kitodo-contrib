@@ -23,7 +23,7 @@ alter table projekte
 update projekte
 	set projectIsArchived = false;
 
-alter alter table prozesse
+alter table prozesse
 	modify wikifield TEXT null default null,
 	add column batchID INT(11) null,
 	add column docketID INT(11) null,
