@@ -11,6 +11,7 @@ $defaultNS = array (
 	'mets' => 'http://www.loc.gov/METS/',
 	'mods' => 'http://www.loc.gov/mods/v3',
 	'alto' => 'http://www.loc.gov/standards/alto/ns-v2#',
+	'document' => 'http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml',
 );
 
 // Load document into DOM.
@@ -30,6 +31,15 @@ foreach ($defaultNS as $ns => $uri) {
 
 }
 
+// Use predefined schema locations instead of the declared locations in the document
+// Set default schema locations.
+$schema = array (
+	'mets' => 'http://www.loc.gov/standards/mets/version17/mets.xsd',
+	'mods' => 'http://www.loc.gov/mods/v3/mods-3-4.xsd',
+	'alto' => 'file:///home/ehrlich/alto20-slub.xsd',
+	'document' => 'http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml',
+);
+/*
 // Get all schema locations.
 $schemaLocations = $xpath->query('//@xsi:schemaLocation');
 
@@ -41,22 +51,26 @@ foreach ($schemaLocations as $schemaLocation) {
 
 		if ($schemas[$i] == 'http://www.loc.gov/METS/') {
 
-			$schema['mets'] = $schemas[$i + 1];
+			$schema['mets'] = $schemas[++$i];
 
 		} elseif ($schemas[$i] == 'http://www.loc.gov/mods/v3') {
 
-			$schema['mods'] = $schemas[$i + 1];
+			$schema['mods'] = $schemas[++$i];
 
 		} elseif ($schemas[$i] == 'http://www.loc.gov/standards/alto/ns-v2#') {
 
-			$schema['alto'] = $schemas[$i + 1];
+			$schema['alto'] = $schemas[++$i];
+
+		} elseif ($schemas[$i] == 'http://www.abbyy.com/FineReader_xml/FineReader10-schema-v1.xml') {
+
+			$schema['document'] = $schemas[++$i];
 
 		}
 
 	}
 
 }
-
+*/
 // Validate document.
 libxml_use_internal_errors(TRUE);
 

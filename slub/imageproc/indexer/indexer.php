@@ -6,6 +6,7 @@ $roots = array (
 	'/mnt/goobi3',
 	'/mnt/goobi4',
 	'/mnt/goobi5',
+	'/mnt/goobi6',
 );
 
 $pids = array (
@@ -13,6 +14,7 @@ $pids = array (
 	'hmtl' => 4152,
 	'ubl' => 5939,
 	'ubf' => 7037,
+	'illustrierte' => 7162,
 );
 
 $cores = array (
@@ -20,6 +22,7 @@ $cores = array (
 	'hmtl' => 1,
 	'ubl' => 2,
 	'ubf' => 4,
+	'illustrierte' => 3,
 );
 
 foreach ($roots as $root) {
@@ -32,17 +35,20 @@ foreach ($clients as $client) {
 
 		$dir = $root.'/'.$client;
 
-		$processes = scandir($dir);
+		chdir($dir);
+
+		$processes = glob('*_*');
 
 		$todo = array ();
 
 		foreach ($processes as $process) {
 
-			if ((preg_match('/^.*_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $process) || preg_match('/^.*_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?_.*$/i', $process))
-				&& is_dir($dir.'/'.$process)
-				&& file_exists($dir.'/'.$process.'/'.$process.'.xml')
-				&& file_exists($dir.'/'.$process.'/ready-for-indexing')
-				&& !file_exists($dir.'/'.$process.'/corrupt')) {
+			if ((preg_match('/^.*_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $process)
+						|| preg_match('/^.*_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?_.*$/i', $process))
+					&& is_dir($dir.'/'.$process)
+					&& file_exists($dir.'/'.$process.'/'.$process.'.xml')
+					&& file_exists($dir.'/'.$process.'/ready-for-indexing')
+					&& !file_exists($dir.'/'.$process.'/corrupt')) {
 
 				$parts = explode('_', $process);
 
@@ -112,7 +118,7 @@ foreach ($clients as $client) {
 
 						exec('rm -f '.$root.'/'.$client.'/'.$ppn.'/ready-for-indexing');
 
-						exec('rm -f '.$root.'/'.$client.'/'.$ppn.'/processing');
+						exec('rm -f '.$root.'/'.$client.'/'.$ppn.'/processing_*');
 
 						$update = TRUE;
 
@@ -138,7 +144,7 @@ foreach ($clients as $client) {
 
 					exec('rm -f '.$dir.'/'.$ppn.'/ready-for-indexing');
 
-					exec('rm -f '.$dir.'/'.$ppn.'/processing');
+					exec('rm -f '.$dir.'/'.$ppn.'/processing_*');
 
 					exec('ln -sf '.$dir.'/'.$ppn.' /var/www/webroot/fileadmin/data/'.$ppn);
 
