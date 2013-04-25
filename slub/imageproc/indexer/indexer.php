@@ -43,8 +43,8 @@ foreach ($clients as $client) {
 
 		foreach ($processes as $process) {
 
-			if ((preg_match('/^.*_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $process)
-						|| preg_match('/^.*_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?_.*$/i', $process))
+			if ((preg_match('/^.+_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?(_.+)?$/i', $process)
+						|| preg_match('/^.+_DE-(1a|611)-[0-9]{1,7}_.+$/i', $dir))
 					&& is_dir($dir.'/'.$process)
 					&& file_exists($dir.'/'.$process.'/'.$process.'.xml')
 					&& file_exists($dir.'/'.$process.'/ready-for-indexing')
@@ -54,7 +54,8 @@ foreach ($clients as $client) {
 
 				foreach ($parts as $part) {
 
-					if (preg_match('/^[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $part)) {
+					if (preg_match('/^[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $part)
+							|| preg_match('/^DE-(1a|611)-[0-9]{1,7}$/i', $part)) {
 
 						$_ppn = $part;
 

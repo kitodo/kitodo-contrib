@@ -32,8 +32,8 @@ foreach ( $clients as $client ) {
 		if (is_dir($root.'/'.$dir)
 				&& file_exists($root.'/'.$dir.'/'.$dir.'.xml')
 				&& !count(glob($root.'/'.$dir.'/processing_*'))
-				&& (preg_match('/^.+_[0-9]{8}[0-9LXYZ]{1}(-[0-9]+)?$/i', $dir)
-					|| preg_match('/^.+_[0-9]{8}[0-9LXYZ]{1}(-[0-9]+)?_.+$/i', $dir))) {
+				&& (preg_match('/^.+_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?(_.+)?$/i', $dir)
+					|| preg_match('/^.+_DE-(1a|611)-[0-9]{1,7}_.+$/i', $dir))) {
 
 			exec('touch '.$root.'/'.$dir.'/processing_'.php_uname('n'));
 
@@ -85,7 +85,8 @@ foreach ( $clients as $client ) {
 
 			foreach ($tiles as $tile) {
 
-				if (preg_match('/^[0-9]{8}[0-9LXYZ]{1}(-[0-9]+)?$/i', $tile)) {
+				if (preg_match('/^[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $tile)
+						|| preg_match('/^DE-(1a|611)-[0-9]{1,7}$/i', $tile)) {
 
 					$ppn = $tile;
 
