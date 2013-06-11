@@ -150,7 +150,7 @@ foreach ( $clients as $client ) {
 
 					$processId = explode('/', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href);
 					
-					$processId = $processId[5];
+					$processId = $processId[7];
 										
 				} else {
 					
@@ -207,11 +207,15 @@ foreach ( $clients as $client ) {
 				
 				exec('cd '.$lock.'/'.$directory.'_tif && mv -fu *.tif /mnt/lza/'.$processId.'/images/scans_tif/');
 
-				exec('mkdir -p /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml');
+				if (file_exists($lock.'/'.$directory.'_xml')) {
+					
+					exec('mkdir -p /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml');
 				
-				exec('cd '.$lock.'/'.$directory.'_xml && cp -fu *.xml /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml/');
+					exec('cd '.$lock.'/'.$directory.'_xml && cp -fu *.xml /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml/');
 
-				exec('cd '.$lock.' && ln -sf '.$directory.'_xml '.$ppn.'_ocr');
+					exec('cd '.$lock.' && ln -sf '.$directory.'_xml '.$ppn.'_ocr');
+					
+				}
 
 				exec('cd '.$lock.' && rm -rf '.$directory.'_abbyy');
 

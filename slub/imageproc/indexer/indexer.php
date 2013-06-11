@@ -270,7 +270,7 @@ function fixMETS($file) {
 	
 		$processId = explode('/', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href);
 			
-		$processId = $processId[5];
+		$processId = $processId[7];
 	
 	} else {
 			
