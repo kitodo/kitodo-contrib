@@ -1,5 +1,14 @@
 <?php
 
+$scan = array (
+//	'/mnt/goobi',
+//	'/mnt/goobi2',
+//	'/mnt/goobi3',
+//	'/mnt/goobi4',
+//	'/mnt/goobi5',
+	'/mnt/goobi6',
+);
+
 $roots = array (
 	'/mnt/goobi',
 	'/mnt/goobi2',
@@ -25,7 +34,7 @@ $cores = array (
 	'illustrierte' => 3,
 );
 
-foreach ($roots as $root) {
+foreach ($scan as $root) {
 
 $clients = scandir($root);
 
@@ -44,7 +53,7 @@ foreach ($clients as $client) {
 		foreach ($processes as $process) {
 
 			if ((preg_match('/^.+_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?(_.+)?$/i', $process)
-						|| preg_match('/^.+_DE-(1a|611)-[0-9]{1,7}_.+$/i', $dir))
+						|| preg_match('/^.+_DE-(1a|611)-[0-9]{1,7}_.+$/i', $process))
 					&& is_dir($dir.'/'.$process)
 					&& file_exists($dir.'/'.$process.'/'.$process.'.xml')
 					&& file_exists($dir.'/'.$process.'/ready-for-indexing')
@@ -85,18 +94,36 @@ foreach ($clients as $client) {
 
 			exec('mv -f '.$dir.'/'.$proc.'/'.$proc.'.xml '.$dir.'/'.$proc.'/'.$proc.'_mets.xml');
 
-			fixURN($dir.'/'.$proc.'/'.$proc.'_mets.xml');
+			$processId = fixMETS($dir.'/'.$proc.'/'.$proc.'_mets.xml');
 
 			if (file_exists($dir.'/'.$proc.'/'.$proc.'_anchor.xml')) {
 
-				fixURN($dir.'/'.$proc.'/'.$proc.'_anchor.xml');
+				fixMETS($dir.'/'.$proc.'/'.$proc.'_anchor.xml');
 
 			}
 
 			if (is_dir($dir.'/'.$proc.'/'.$proc.'_tif')) {
 
 				echo "  Images found! Moving all files to ";
+				
+				if (file_exists($dir.'/'.$proc.'/tif.md5')) {
+					
+					exec('mv -fu '.$dir.'/'.$proc.'/tif.md5 /mnt/lza/'.$processId.'/');
+					
+				} else {
+					
+					exec('cd /mnt/lza/'.$processId.' && md5sum images/scans_tif/*.tif > tif.md5');
+					
+				}
 
+				if (file_exists($dir.'/'.$proc.'/'.$proc.'_anchor.xml')) {
+
+					exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_anchor.xml /mnt/lza/'.$processId.'/');
+					
+				}
+
+				exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_mets.xml /mnt/lza/'.$processId.'/');
+				
 				$update = FALSE;
 
 				foreach ($roots as $root) {
@@ -221,7 +248,7 @@ foreach ($clients as $client) {
 
 }
 
-function fixURN($file) {
+function fixMETS($file) {
 
 	$xml = simplexml_load_file($file);
 
@@ -237,7 +264,23 @@ function fixURN($file) {
 
 	}
 
+	$_processId = $xml->xpath('//mets:fileGrp[@USE="LOCAL"]/mets:file/mets:FLocat');
+	
+	if (!empty($_processId[0])) {
+	
+		$processId = explode('/', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href);
+			
+		$processId = $processId[5];
+	
+	} else {
+			
+		$processId = 0;
+			
+	}
+	
 	file_put_contents($file, $xml->asXML());
+	
+	return $processId;
 
 }
 

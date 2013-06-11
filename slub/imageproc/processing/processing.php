@@ -1,11 +1,11 @@
 <?php
 
 $bases = array (
-	'/mnt/goobi',
-	'/mnt/goobi2',
-	'/mnt/goobi3',
-	'/mnt/goobi4',
-	'/mnt/goobi5',
+//	'/mnt/goobi',
+//	'/mnt/goobi2',
+//	'/mnt/goobi3',
+//	'/mnt/goobi4',
+//	'/mnt/goobi5',
 	'/mnt/goobi6',
 );
 
@@ -96,26 +96,16 @@ foreach ( $clients as $client ) {
 
 			}
 
-			unset ($output);
-
-			$output = array ();
-
 			if (!empty($ppn)
 					&& !is_dir($root.'/'.$directory.'/'.$directory.'_tif')) {
 
 				echo "No TIFFs available, but XML metadata found. Doing nothing...\n";
 
-				exec('chown -R root.root '.$root.'/'.$directory.'/', $output);
+				exec('chown -R root.root '.$root.'/'.$directory.'/');
 
-				exec('chmod 644 '.$root.'/'.$directory.'/'.$directory.'.xml', $output);
+				exec('chmod 644 '.$root.'/'.$directory.'/'.$directory.'.xml');
 
-				exec('touch '.$root.'/'.$directory.'/ready-for-indexing', $output);
-
-				if (!empty($output)) {
-
-					echo '  '.implode("\n  ", $output)."\n";
-
-				}
+				exec('touch '.$root.'/'.$directory.'/ready-for-indexing');
 
 				echo "Done!\n";
 
@@ -126,13 +116,13 @@ foreach ( $clients as $client ) {
 
 				$lock = $root.'/'.$directory;
 
-				exec('chown -R root.root '.$lock.'/', $output);
+				exec('chown -R root.root '.$lock.'/');
 
-				exec('chmod 755 '.$lock.'/', $output);
+				exec('chmod 755 '.$lock.'/');
 
-				exec('chmod 755 '.$lock.'/'.$directory.'_tif/', $output);
+				exec('chmod 755 '.$lock.'/'.$directory.'_tif/');
 
-				exec('mkdir -m777 '.$lock.'/'.$directory.'_tif/jpegs', $output);
+				exec('mkdir -m777 '.$lock.'/'.$directory.'_tif/jpegs');
 
 				$xml = @simplexml_load_file($lock.'/'.$directory.'.xml');
 
@@ -153,7 +143,21 @@ foreach ( $clients as $client ) {
 					$footer = $client;
 
 				}
+				
+				$_processId = $xml->xpath('//mets:fileGrp[@USE="LOCAL"]/mets:file/mets:FLocat');
 
+				if (!empty($_processId[0])) {
+
+					$processId = explode('/', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href);
+					
+					$processId = $processId[5];
+										
+				} else {
+					
+					$processId = 0;
+					
+				}
+				
 				unset ($tiffs);
 
 				$tiffs = scandir($lock.'/'.$directory.'_tif');
@@ -167,53 +171,53 @@ foreach ( $clients as $client ) {
 
 						$i++;
 
-						exec('convert '.$lock.'/'.$directory.'_tif/'.$tiff.' -quiet -quality 75 -strip '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/'.$tiff.' -quiet -quality 75 -strip '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg');
 
-						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg -scale 500 -quality 75 -strip '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg -scale 500 -quality 75 -strip '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg');
 
-						exec('montage '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg '.$scriptpath.'/images/'.$footer.'_500.gif -tile 1x2 -geometry +0+0 -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg', $output);
+						exec('montage '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg '.$scriptpath.'/images/'.$footer.'_500.gif -tile 1x2 -geometry +0+0 -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg');
 
-						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg -gravity southeast -stroke none -fill black -annotate +0+25 \'http://digital.slub-dresden.de/id'.$ppn.'/'.$i.'\' -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg -gravity southeast -stroke none -fill black -annotate +0+25 \'http://digital.slub-dresden.de/id'.$ppn.'/'.$i.'\' -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.small.jpg');
 
-						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg -scale 1000 -quality 75 -strip '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg -scale 1000 -quality 75 -strip '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg');
 
-						exec('montage '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg '.$scriptpath.'/images/'.$footer.'_1000.gif -tile 1x2 -geometry +0+0 -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg', $output);
+						exec('montage '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg '.$scriptpath.'/images/'.$footer.'_1000.gif -tile 1x2 -geometry +0+0 -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg');
 
-						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg -gravity south -stroke none -fill white -annotate +25+25 \'http://digital.slub-dresden.de/id'.$ppn.'/'.$i.'\' -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg -gravity south -stroke none -fill white -annotate +25+25 \'http://digital.slub-dresden.de/id'.$ppn.'/'.$i.'\' -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg');
 
-						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg -strip -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.pdf', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.medium.jpg -strip -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.pdf');
 
-						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg -scale 2000 -quality 75 -strip '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg -scale 2000 -quality 75 -strip '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg');
 
-						exec('montage '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg '.$scriptpath.'/images/'.$footer.'_2000.gif -tile 1x2 -geometry +0+0 -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg', $output);
+						exec('montage '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg '.$scriptpath.'/images/'.$footer.'_2000.gif -tile 1x2 -geometry +0+0 -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg');
 
-						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg -gravity south -stroke none -fill white -annotate +50+50 \'http://digital.slub-dresden.de/id'.$ppn.'/'.$i.'\' -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg -gravity south -stroke none -fill white -annotate +50+50 \'http://digital.slub-dresden.de/id'.$ppn.'/'.$i.'\' -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.large.jpg');
 
-						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg -scale 150x150 -strip -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.thumbnail.jpg', $output);
+						exec('convert '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.original.jpg -scale 150x150 -strip -quality 75 '.$lock.'/'.$directory.'_tif/jpegs/'.$tiff.'.thumbnail.jpg');
 
 					}
 
 				}
 
-				exec('cd '.$lock.'/'.$directory.'_tif/jpegs && pdftk *.pdf cat output '.$ppn.'.pdf', $output);
+				exec('cd '.$lock.'/'.$directory.'_tif/jpegs && pdftk *.pdf cat output '.$ppn.'.pdf');
 
-				exec('cd '.$lock.' && ln -sf '.$directory.'_tif '.$ppn.'_tif', $output);
+				exec('cd '.$lock.' && ln -sf '.$directory.'_tif '.$ppn.'_tif');
 
-				exec('cd '.$lock.'/'.$directory.'_tif && rm -f *.tif', $output);
+				exec('mkdir -p /mnt/lza/'.$processId.'/images/scans_tif');
+				
+				exec('cd '.$lock.'/'.$directory.'_tif && mv -fu *.tif /mnt/lza/'.$processId.'/images/scans_tif/');
 
-				exec('cd '.$lock.' && ln -sf '.$directory.'_xml '.$ppn.'_ocr', $output);
+				exec('mkdir -p /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml');
+				
+				exec('cd '.$lock.'/'.$directory.'_xml && cp -fu *.xml /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml/');
 
-				exec('cd '.$lock.' && rm -rf '.$directory.'_abbyy', $output);
+				exec('cd '.$lock.' && ln -sf '.$directory.'_xml '.$ppn.'_ocr');
 
-				exec('cd '.$lock.' && rm -rf '.$directory.'_alto', $output);
+				exec('cd '.$lock.' && rm -rf '.$directory.'_abbyy');
 
-				exec('touch '.$lock.'/ready-for-indexing', $output);
+				exec('cd '.$lock.' && rm -rf '.$directory.'_alto');
 
-				if (!empty($output)) {
-
-					echo '  '.implode("\n  ", $output)."\n";
-
-				}
+				exec('touch '.$lock.'/ready-for-indexing');
 
 				echo "Done!\n";
 
