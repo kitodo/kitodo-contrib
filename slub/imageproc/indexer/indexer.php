@@ -34,6 +34,8 @@ $cores = array (
 	'illustrierte' => 3,
 );
 
+$lza_usrgrp = '601.610';
+
 foreach ($scan as $root) {
 
 $clients = scandir($root);
@@ -106,23 +108,33 @@ foreach ($clients as $client) {
 
 				echo "  Images found! Moving all files to ";
 				
-				if (file_exists($dir.'/'.$proc.'/tif.md5')) {
+				if (file_exists('/mnt/lza/'.$processId)) {
+
+					if (file_exists($dir.'/'.$proc.'/tif.md5')) {
 					
-					exec('mv -fu '.$dir.'/'.$proc.'/tif.md5 /mnt/lza/'.$processId.'/');
+						exec('mv -fu '.$dir.'/'.$proc.'/tif.md5 /mnt/lza/'.$processId.'/');
+					
+					} else {
+					
+						exec('cd /mnt/lza/'.$processId.' && md5sum images/scans_tif/*.tif > tif.md5');
+					
+					}
+
+					if (file_exists($dir.'/'.$proc.'/'.$proc.'_anchor.xml')) {
+
+						exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_anchor.xml /mnt/lza/'.$processId.'/');
+					
+					}
+
+					exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_mets.xml /mnt/lza/'.$processId.'/');
+					
+					exec('cd /mnt/lza && chown -R '.$lza_usrgrp.' '.$processId);
 					
 				} else {
 					
-					exec('cd /mnt/lza/'.$processId.' && md5sum images/scans_tif/*.tif > tif.md5');
+					exec('rm -rf '.$dir.'/'.$proc.'/tif.md5');
 					
 				}
-
-				if (file_exists($dir.'/'.$proc.'/'.$proc.'_anchor.xml')) {
-
-					exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_anchor.xml /mnt/lza/'.$processId.'/');
-					
-				}
-
-				exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_mets.xml /mnt/lza/'.$processId.'/');
 				
 				$update = FALSE;
 

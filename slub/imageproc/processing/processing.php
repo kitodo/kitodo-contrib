@@ -9,6 +9,8 @@ $bases = array (
 	'/mnt/goobi6',
 );
 
+$lza = false;
+
 $scriptpath = dirname(__FILE__);
 
 foreach ($bases as $base) {
@@ -203,15 +205,27 @@ foreach ( $clients as $client ) {
 
 				exec('cd '.$lock.' && ln -sf '.$directory.'_tif '.$ppn.'_tif');
 
-				exec('mkdir -p /mnt/lza/'.$processId.'/images/scans_tif');
+				if ($lza) {
 				
-				exec('cd '.$lock.'/'.$directory.'_tif && mv -fu *.tif /mnt/lza/'.$processId.'/images/scans_tif/');
+					exec('mkdir -p /mnt/lza/'.$processId.'/images/scans_tif');
+				
+					exec('cd '.$lock.'/'.$directory.'_tif && mv -fu *.tif /mnt/lza/'.$processId.'/images/scans_tif/');
 
+				} else {
+					
+					exec('cd '.$lock.'/'.$directory.'_tif && rm -rf *.tif');
+					
+				}
+				
 				if (file_exists($lock.'/'.$directory.'_xml')) {
 					
-					exec('mkdir -p /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml');
+					if ($lza) {
+					
+						exec('mkdir -p /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml');
 				
-					exec('cd '.$lock.'/'.$directory.'_xml && cp -fu *.xml /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml/');
+						exec('cd '.$lock.'/'.$directory.'_xml && cp -fu *.xml /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml/');
+						
+					}
 
 					exec('cd '.$lock.' && ln -sf '.$directory.'_xml '.$ppn.'_ocr');
 					
