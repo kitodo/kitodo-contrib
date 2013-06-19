@@ -138,7 +138,7 @@ foreach ( $clients as $client ) {
 
 				if (!empty($_processId[0])) {
 
-					$processId = intval(str_ireplace('file:/home/goobi/work/daten/', '', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href));
+					$processId = intval(preg_replace('%^file:/{1,3}home/goobi/work/daten/%i', '', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href));
 
 				} else {
 
