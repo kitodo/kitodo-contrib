@@ -104,38 +104,40 @@ foreach ($clients as $client) {
 
 			}
 
+			echo "  Goobi Process ID: $processId\n";
+
 			if (is_dir($dir.'/'.$proc.'/'.$proc.'_tif')) {
 
 				echo "  Images found! Moving all files to ";
-				
-				if (file_exists('/mnt/lza/'.$processId)) {
+
+				if (!empty($processId) && file_exists('/mnt/lza/'.$processId)) {
 
 					if (file_exists($dir.'/'.$proc.'/tif.md5')) {
-					
+
 						exec('mv -fu '.$dir.'/'.$proc.'/tif.md5 /mnt/lza/'.$processId.'/');
-					
+
 					} else {
-					
+
 						exec('cd /mnt/lza/'.$processId.' && md5sum images/scans_tif/*.tif > tif.md5');
-					
+
 					}
 
 					if (file_exists($dir.'/'.$proc.'/'.$proc.'_anchor.xml')) {
 
 						exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_anchor.xml /mnt/lza/'.$processId.'/');
-					
+
 					}
 
 					exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_mets.xml /mnt/lza/'.$processId.'/');
-					
+
 					exec('cd /mnt/lza && chown -R '.$lza_usrgrp.' '.$processId);
-					
+
 				} else {
-					
+
 					exec('rm -rf '.$dir.'/'.$proc.'/tif.md5');
-					
+
 				}
-				
+
 				$update = FALSE;
 
 				foreach ($roots as $root) {
@@ -277,21 +279,19 @@ function fixMETS($file) {
 	}
 
 	$_processId = $xml->xpath('//mets:fileGrp[@USE="LOCAL"]/mets:file/mets:FLocat');
-	
+
 	if (!empty($_processId[0])) {
-	
-		$processId = explode('/', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href);
-			
-		$processId = $processId[7];
-	
+
+		$processId = intval(str_ireplace('file:/home/goobi/work/daten/', '', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href));
+
 	} else {
-			
+
 		$processId = 0;
-			
+
 	}
-	
+
 	file_put_contents($file, $xml->asXML());
-	
+
 	return $processId;
 
 }

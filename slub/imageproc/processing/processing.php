@@ -101,7 +101,7 @@ foreach ( $clients as $client ) {
 			if (!empty($ppn)
 					&& !is_dir($root.'/'.$directory.'/'.$directory.'_tif')) {
 
-				echo "No TIFFs available, but XML metadata found. Doing nothing...\n";
+				echo "  No TIFFs available, but XML metadata found. Doing nothing...\n";
 
 				exec('chown -R root.root '.$root.'/'.$directory.'/');
 
@@ -114,7 +114,7 @@ foreach ( $clients as $client ) {
 			} elseif (!empty($ppn)
 					&& is_dir($root.'/'.$directory.'/'.$directory.'_tif')) {
 
-				echo "TIFFs and XML metadata found. Doing full image processing...\n";
+				echo "  TIFFs and XML metadata found. Doing full image processing...\n";
 
 				$lock = $root.'/'.$directory;
 
@@ -134,6 +134,20 @@ foreach ( $clients as $client ) {
 
 				$xml->registerXPathNamespace('slub', 'http://slub-dresden.de/');
 
+				$_processId = $xml->xpath('//mets:fileGrp[@USE="LOCAL"]/mets:file/mets:FLocat');
+
+				if (!empty($_processId[0])) {
+
+					$processId = intval(str_ireplace('file:/home/goobi/work/daten/', '', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href));
+
+				} else {
+
+					$processId = 0;
+
+				}
+
+				echo "  Goobi Process ID: $processId\n";
+
 				$_footer = $xml->xpath('//slub:footer');
 
 				if (!empty($_footer[0])) {
@@ -145,21 +159,9 @@ foreach ( $clients as $client ) {
 					$footer = $client;
 
 				}
-				
-				$_processId = $xml->xpath('//mets:fileGrp[@USE="LOCAL"]/mets:file/mets:FLocat');
 
-				if (!empty($_processId[0])) {
+				echo "  Using footer: $footer\n";
 
-					$processId = explode('/', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href);
-					
-					$processId = $processId[7];
-										
-				} else {
-					
-					$processId = 0;
-					
-				}
-				
 				unset ($tiffs);
 
 				$tiffs = scandir($lock.'/'.$directory.'_tif');
@@ -205,30 +207,30 @@ foreach ( $clients as $client ) {
 
 				exec('cd '.$lock.' && ln -sf '.$directory.'_tif '.$ppn.'_tif');
 
-				if ($lza) {
-				
+				if ($lza && !empty($processId)) {
+
 					exec('mkdir -p /mnt/lza/'.$processId.'/images/scans_tif');
-				
+
 					exec('cd '.$lock.'/'.$directory.'_tif && mv -fu *.tif /mnt/lza/'.$processId.'/images/scans_tif/');
 
 				} else {
-					
+
 					exec('cd '.$lock.'/'.$directory.'_tif && rm -rf *.tif');
-					
+
 				}
-				
+
 				if (file_exists($lock.'/'.$directory.'_xml')) {
-					
-					if ($lza) {
-					
+
+					if ($lza && !empty($processId)) {
+
 						exec('mkdir -p /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml');
-				
+
 						exec('cd '.$lock.'/'.$directory.'_xml && cp -fu *.xml /mnt/lza/'.$processId.'/ocr/'.$directory.'_xml/');
-						
+
 					}
 
 					exec('cd '.$lock.' && ln -sf '.$directory.'_xml '.$ppn.'_ocr');
-					
+
 				}
 
 				exec('cd '.$lock.' && rm -rf '.$directory.'_abbyy');
