@@ -270,6 +270,8 @@ function fixMETS($file) {
 
 	$xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
 
+	$xml->registerXPathNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+
 	$urns = $xml->xpath('//mods:identifier[@type="urn"]');
 
 	foreach ($urns as $urn) {
@@ -287,6 +289,30 @@ function fixMETS($file) {
 	} else {
 
 		$processId = 0;
+
+	}
+
+	$_schemaLocations = $xml->xpath('/mets:mets/@xsi:schemaLocation');
+
+	if (!empty($_schemaLocations[0])) {
+
+		$_schemas = explode(' ', $_schemaLocations[0]);
+
+		for ($i = 0; $i < count($_schemas); $i++) {
+
+			if ($_schemas[$i] == 'http://www.loc.gov/mods/v3') {
+
+				$_schemas[$i + 1] = 'http://www.loc.gov/standards/mods/mods.xsd';
+
+			} elseif ($_schemas[$i] == 'http://www.loc.gov/METS/') {
+
+				$_schemas[$i + 1] = 'http://www.loc.gov/standards/mets/mets.xsd';
+
+			}
+
+		}
+
+		$_schemaLocations[0] = implode(' ', $_schemas);
 
 	}
 
