@@ -209,6 +209,8 @@ foreach ( $clients as $client ) {
 
 				if ($lza && !empty($processId)) {
 
+					exec('mkdir -m770 /mnt/lza/'.$processId);
+
 					exec('mkdir -p /mnt/lza/'.$processId.'/images/scans_tif');
 
 					exec('cd '.$lock.'/'.$directory.'_tif && mv -fu *.tif /mnt/lza/'.$processId.'/images/scans_tif/');
