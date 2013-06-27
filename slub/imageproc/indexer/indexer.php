@@ -270,8 +270,6 @@ function fixMETS($file) {
 
 	$xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
 
-	$xml->registerXPathNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-
 	$urns = $xml->xpath('//mods:identifier[@type="urn"]');
 
 	foreach ($urns as $urn) {
@@ -292,11 +290,11 @@ function fixMETS($file) {
 
 	}
 
-	$_schemaLocations = $xml->xpath('/mets:mets/@xsi:schemaLocation');
+	$_schemaLocations = $xml->xpath('/mets:mets');
 
-	if (!empty($_schemaLocations[0])) {
+	foreach ($_schemaLocations as $_schemaLocation) {
 
-		$_schemas = explode(' ', $_schemaLocations[0]);
+		$_schemas = explode(' ', $_schemaLocation->attributes('http://www.w3.org/2001/XMLSchema-instance')->schemaLocation);
 
 		for ($i = 0; $i < count($_schemas); $i++) {
 
@@ -312,7 +310,8 @@ function fixMETS($file) {
 
 		}
 
-		$_schemaLocations[0] = implode(' ', $_schemas);
+		$_schemaLocation->attributes('http://www.w3.org/2001/XMLSchema-instance')->schemaLocation = implode(' ', $_schemas);
+
 
 	}
 
