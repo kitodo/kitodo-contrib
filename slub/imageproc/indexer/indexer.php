@@ -312,6 +312,17 @@ function fixMETS($file) {
 
 		$_schemaLocation->attributes('http://www.w3.org/2001/XMLSchema-instance')->schemaLocation = implode(' ', $_schemas);
 
+	}
+
+	$_languages = $xml->xpath('//mods:language[count(./mods:scriptTerm)>0][count(./mods:languageTerm)=0]');
+
+	foreach ($_languages as $_language) {
+
+		$_dom = dom_import_simplexml($_language);
+
+		$_insert = $_dom->insertBefore($_dom->ownerDocument->createElementNS('http://www.loc.gov/mods/v3', 'mods:languageTerm'), $_dom->firstChild);
+
+		$_language = simplexml_import_dom($_insert);
 
 	}
 
