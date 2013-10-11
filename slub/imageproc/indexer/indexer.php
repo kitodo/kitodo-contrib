@@ -5,18 +5,24 @@ $roots = array (
 	'/mnt/goobi2',
 	'/mnt/goobi3',
 	'/mnt/goobi4',
+	'/mnt/goobi5',
+	'/mnt/goobi6',
 );
 
 $pids = array (
 	'typo3' => 4152,
 	'hmtl' => 4152,
 	'ubl' => 5939,
+	'ubf' => 7037,
+	'illustrierte' => 7162,
 );
 
 $cores = array (
 	'typo3' => 1,
 	'hmtl' => 1,
 	'ubl' => 2,
+	'ubf' => 4,
+	'illustrierte' => 3,
 );
 
 foreach ($roots as $root) {
@@ -29,23 +35,27 @@ foreach ($clients as $client) {
 
 		$dir = $root.'/'.$client;
 
-		$processes = scandir($dir);
+		chdir($dir);
+
+		$processes = glob('*_*');
 
 		$todo = array ();
 
 		foreach ($processes as $process) {
 
-			if ((preg_match('/^.*_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $process) || preg_match('/^.*_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?_.*$/i', $process))
-				&& is_dir($dir.'/'.$process)
-				&& file_exists($dir.'/'.$process.'/'.$process.'.xml')
-				&& file_exists($dir.'/'.$process.'/ready-for-indexing')
-				&& !file_exists($dir.'/'.$process.'/corrupt')) {
+			if ((preg_match('/^.+_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?(_.+)?$/i', $process)
+						|| preg_match('/^.+_DE-(1a|611)-[0-9]{1,7}_.+$/i', $dir))
+					&& is_dir($dir.'/'.$process)
+					&& file_exists($dir.'/'.$process.'/'.$process.'.xml')
+					&& file_exists($dir.'/'.$process.'/ready-for-indexing')
+					&& !file_exists($dir.'/'.$process.'/corrupt')) {
 
 				$parts = explode('_', $process);
 
 				foreach ($parts as $part) {
 
-					if (preg_match('/^[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $part)) {
+					if (preg_match('/^[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?$/i', $part)
+							|| preg_match('/^DE-(1a|611)-[0-9]{1,7}$/i', $part)) {
 
 						$_ppn = $part;
 
@@ -109,7 +119,7 @@ foreach ($clients as $client) {
 
 						exec('rm -f '.$root.'/'.$client.'/'.$ppn.'/ready-for-indexing');
 
-						exec('rm -f '.$root.'/'.$client.'/'.$ppn.'/processing');
+						exec('rm -f '.$root.'/'.$client.'/'.$ppn.'/processing_*');
 
 						$update = TRUE;
 
@@ -135,7 +145,7 @@ foreach ($clients as $client) {
 
 					exec('rm -f '.$dir.'/'.$ppn.'/ready-for-indexing');
 
-					exec('rm -f '.$dir.'/'.$ppn.'/processing');
+					exec('rm -f '.$dir.'/'.$ppn.'/processing_*');
 
 					exec('ln -sf '.$dir.'/'.$ppn.' /var/www/webroot/fileadmin/data/'.$ppn);
 
@@ -228,6 +238,30 @@ function fixURN($file) {
 	}
 
 	file_put_contents($file, $xml->asXML());
+
+}
+
+function cleanMETS($file) {
+
+	$xml = new DOMDocument();
+
+	$xml->load($file);
+
+	$xpath = new DOMXPath($xml);
+
+	$xpath->registerNamespace('mets', 'http://www.loc.gov/METS/');
+
+	$xpath->registerNamespace('mods', 'http://www.loc.gov/mods/v3');
+
+	foreach ($xpath->query('//mets:fileSec/mets:fileGrp[@USE="LOCAL"]') as $node) {
+
+		$node->parentNode->removeChild($node);
+
+	}
+
+	// TODO: Delete fptr as well!
+
+	file_put_contents($file, $xml->saveXML());
 
 }
 
