@@ -36,7 +36,7 @@ update prozesse
 alter table schritte
 	add column batchStep BIT default false,
 	add column stepPlugin VARCHAR(255),
-	add column validatorPlugin VARCHAR(255);
+	add column validationPlugin VARCHAR(255);
 
 
 /* Move records from table schritteeigenschaften to table prozesseeigenschaften */
