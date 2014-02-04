@@ -6,7 +6,8 @@ $bases = array (
 //	'/mnt/goobi3',
 //	'/mnt/goobi4',
 //	'/mnt/goobi5',
-	'/mnt/goobi6',
+//	'/mnt/goobi6',
+	'/mnt/goobi7',
 );
 
 $lza = false;

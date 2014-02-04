@@ -6,7 +6,8 @@ $scan = array (
 //	'/mnt/goobi3',
 //	'/mnt/goobi4',
 //	'/mnt/goobi5',
-	'/mnt/goobi6',
+//	'/mnt/goobi6',
+	'/mnt/goobi7',
 );
 
 $roots = array (
@@ -16,6 +17,7 @@ $roots = array (
 	'/mnt/goobi4',
 	'/mnt/goobi5',
 	'/mnt/goobi6',
+	'/mnt/goobi7',
 );
 
 $pids = array (
