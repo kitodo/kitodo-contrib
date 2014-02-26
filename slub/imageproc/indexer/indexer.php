@@ -1,5 +1,15 @@
 <?php
 
+$scan = array (
+//	'/mnt/goobi',
+//	'/mnt/goobi2',
+//	'/mnt/goobi3',
+//	'/mnt/goobi4',
+//	'/mnt/goobi5',
+//	'/mnt/goobi6',
+	'/mnt/goobi7',
+);
+
 $roots = array (
 	'/mnt/goobi',
 	'/mnt/goobi2',
@@ -7,6 +17,7 @@ $roots = array (
 	'/mnt/goobi4',
 	'/mnt/goobi5',
 	'/mnt/goobi6',
+	'/mnt/goobi7',
 );
 
 $pids = array (
@@ -25,7 +36,9 @@ $cores = array (
 	'illustrierte' => 3,
 );
 
-foreach ($roots as $root) {
+$lza_usrgrp = '601.610';
+
+foreach ($scan as $root) {
 
 $clients = scandir($root);
 
@@ -44,7 +57,7 @@ foreach ($clients as $client) {
 		foreach ($processes as $process) {
 
 			if ((preg_match('/^.+_[0-9]{8}[0-9A-Z]{1}(-[0-9]+)?(_.+)?$/i', $process)
-						|| preg_match('/^.+_DE-(1a|611)-[0-9]{1,7}_.+$/i', $dir))
+						|| preg_match('/^.+_DE-(1a|611)-[0-9]{1,7}_.+$/i', $process))
 					&& is_dir($dir.'/'.$process)
 					&& file_exists($dir.'/'.$process.'/'.$process.'.xml')
 					&& file_exists($dir.'/'.$process.'/ready-for-indexing')
@@ -85,17 +98,47 @@ foreach ($clients as $client) {
 
 			exec('mv -f '.$dir.'/'.$proc.'/'.$proc.'.xml '.$dir.'/'.$proc.'/'.$proc.'_mets.xml');
 
-			fixURN($dir.'/'.$proc.'/'.$proc.'_mets.xml');
+			$processId = fixMETS($dir.'/'.$proc.'/'.$proc.'_mets.xml');
 
 			if (file_exists($dir.'/'.$proc.'/'.$proc.'_anchor.xml')) {
 
-				fixURN($dir.'/'.$proc.'/'.$proc.'_anchor.xml');
+				fixMETS($dir.'/'.$proc.'/'.$proc.'_anchor.xml');
 
 			}
+
+			echo "  Goobi Process ID: $processId\n";
 
 			if (is_dir($dir.'/'.$proc.'/'.$proc.'_tif')) {
 
 				echo "  Images found! Moving all files to ";
+
+				if (!empty($processId) && file_exists('/mnt/lza/'.$processId)) {
+
+					if (file_exists($dir.'/'.$proc.'/tif.md5')) {
+
+						exec('mv -fu '.$dir.'/'.$proc.'/tif.md5 /mnt/lza/'.$processId.'/');
+
+					} else {
+
+						exec('cd /mnt/lza/'.$processId.' && md5sum images/scans_tif/*.tif > tif.md5');
+
+					}
+
+					if (file_exists($dir.'/'.$proc.'/'.$proc.'_anchor.xml')) {
+
+						exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_anchor.xml /mnt/lza/'.$processId.'/');
+
+					}
+
+					exec('cp -fu '.$dir.'/'.$proc.'/'.$proc.'_mets.xml /mnt/lza/'.$processId.'/');
+
+					exec('cd /mnt/lza && chown -R '.$lza_usrgrp.' '.$processId);
+
+				} else {
+
+					exec('rm -rf '.$dir.'/'.$proc.'/tif.md5');
+
+				}
 
 				$update = FALSE;
 
@@ -221,7 +264,7 @@ foreach ($clients as $client) {
 
 }
 
-function fixURN($file) {
+function fixMETS($file) {
 
 	$xml = simplexml_load_file($file);
 
@@ -237,7 +280,57 @@ function fixURN($file) {
 
 	}
 
+	$_processId = $xml->xpath('//mets:fileGrp[@USE="LOCAL"]/mets:file/mets:FLocat');
+
+	if (!empty($_processId[0])) {
+
+		$processId = intval(preg_replace('%^file:/{1,3}home/goobi/work/daten/%i', '', (string) $_processId[0]->attributes('http://www.w3.org/1999/xlink')->href));
+
+	} else {
+
+		$processId = 0;
+
+	}
+
+	$_schemaLocations = $xml->xpath('/mets:mets');
+
+	foreach ($_schemaLocations as $_schemaLocation) {
+
+		$_schemas = explode(' ', $_schemaLocation->attributes('http://www.w3.org/2001/XMLSchema-instance')->schemaLocation);
+
+		for ($i = 0; $i < count($_schemas); $i++) {
+
+			if ($_schemas[$i] == 'http://www.loc.gov/mods/v3') {
+
+				$_schemas[$i + 1] = 'http://www.loc.gov/standards/mods/mods.xsd';
+
+			} elseif ($_schemas[$i] == 'http://www.loc.gov/METS/') {
+
+				$_schemas[$i + 1] = 'http://www.loc.gov/standards/mets/mets.xsd';
+
+			}
+
+		}
+
+		$_schemaLocation->attributes('http://www.w3.org/2001/XMLSchema-instance')->schemaLocation = implode(' ', $_schemas);
+
+	}
+
+	$_languages = $xml->xpath('//mods:language[count(./mods:scriptTerm)>0][count(./mods:languageTerm)=0]');
+
+	foreach ($_languages as $_language) {
+
+		$_dom = dom_import_simplexml($_language);
+
+		$_insert = $_dom->insertBefore($_dom->ownerDocument->createElementNS('http://www.loc.gov/mods/v3', 'mods:languageTerm'), $_dom->firstChild);
+
+		$_language = simplexml_import_dom($_insert);
+
+	}
+
 	file_put_contents($file, $xml->asXML());
+
+	return $processId;
 
 }
 
