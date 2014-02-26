@@ -20,9 +20,6 @@ alter table projectfilegroups
 alter table projekte
 	add column projectIsArchived BIT default false;
 
-update projekte
-	set projectIsArchived = false;
-
 alter table prozesse
 	modify wikifield TEXT,
 	add column batchID INT(11),
@@ -38,6 +35,8 @@ alter table schritte
 	add column stepPlugin VARCHAR(255),
 	add column validationPlugin VARCHAR(255);
 
+alter table prozesseeigenschaften
+    modify Wert LONGTEXT;
 
 /* Move records from table schritteeigenschaften to table prozesseeigenschaften */
 insert into prozesseeigenschaften
