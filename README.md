@@ -1,10 +1,11 @@
-goobi-contrib
-=============
+Kitodo.Contrib
+==============
 
-Goobi Community Contributions.
+Kitodo Community Contributions.
 
-This is an auxiliary project to [Goobi.Production](https://github.com/goobi/goobi-production).
-It contains additional files, configuration and scripting useful for administration and
-maintenance of a Goobi.Production installation.
+This is an auxiliary project to
+[Kitodo.Production](https://github.com/kitodo/kitodo-production).
+It contains additional files, configuration and scripting useful for
+administration and maintenance of a Kitodo.Production installation.
 
 It has been migrated from [Launchpad](https://launchpad.net/goobi-contrib).
