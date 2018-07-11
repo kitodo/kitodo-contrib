@@ -136,7 +136,7 @@ fi
 DOI="${DOI_PREFIX}/${DOI_NAMESPACE_SEPARATOR}${PROCESS_ID}"
 
 # Check if the METS/MODS file already contains a DOI. If it contains a different doi than the one just created, exit.
-DOI_IN_METS=$(sed "s/.*<goobi:metadata name=\"DOI\">\([^<]\+\)<\/goobi:metadata>.*/\1/;tx;d;:x" ${METSMODS_FILE});
+DOI_IN_METS=$(sed "s/.*<goobi:metadata name=\"_doi\">\([^<]\+\)<\/goobi:metadata>.*/\1/;tx;d;:x" ${METSMODS_FILE});
 
 if [ -n "${DOI_IN_METS}" ] && [[ "${DOI}" != "${DOI_IN_METS}" ]]; then
     error "DOI ${DOI_IN_METS} already present in METS/MODS file. Since it is different from the just created DOI ${DOI} there is something wrong. Exiting.";
@@ -177,7 +177,7 @@ if [[ ${update} != "true" ]]; then
         mv ${METSMODS_FILE}.tmp ${METSMODS_FILE}
         exit 1;
     fi
-    info "DOI written to METS/MODS file":
+    info "DOI written to METS/MODS file"
     rm ${METSMODS_FILE}.tmp
 fi
 
@@ -185,6 +185,9 @@ fi
 # Register DOI
 
 if [[ ${REGISTER_DOI} == "true" ]]; then
+
+    # Remove brackets from catalog id
+    CATALOG_ID=$(echo "${CATALOG_ID}" | sed "s/[\(\)]//g")
     DOI_LANDING_PAGE=$(echo "${DOI_LANDING_PAGE_PATTERN}" | sed "s/<CatalogID>/${CATALOG_ID}/");
 
     # DataCite Documentation:
@@ -193,7 +196,7 @@ if [[ ${REGISTER_DOI} == "true" ]]; then
     # Thus: sleep for a while
     sleep ${SLEEP_BEFORE_REGISTER};
 
-    STATUS_REGISTER=$(curl --write-out %{http_code} --silent --output /tmp/kitodo/output.txt -H "Content-Type:text/plain;charset=UTF-8" -X PUT --user ${DOI_USER}:${DOI_PASSWORD} -d doi=${DOI}$'\n'url=${DOI_LANDING_PAGE} ${DATACITE_URL}/doi/${DOI});
+    STATUS_REGISTER=$(curl --write-out %{http_code} --silent --output /dev/null -H "Content-Type:text/plain;charset=UTF-8" -X PUT --user ${DOI_USER}:${DOI_PASSWORD} -d doi=${DOI}$'\n'url=${DOI_LANDING_PAGE} ${DATACITE_URL}/doi/${DOI});
     if [[ ${STATUS_REGISTER} == 20* ]]; then
         info "DOI ${DOI} successfully registered to landing page ${DOI_LANDING_PAGE}, status code: ${STATUS_REGISTER}";
     else

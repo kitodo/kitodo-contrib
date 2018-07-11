@@ -30,7 +30,7 @@
         <goobi:goobi>
             <xsl:copy-of select="./*"/>
             <xsl:if test="not(goobi:metadata[@name='_doi']) and $dmdsec_id = 'DMDLOG_0000'">
-                <goobi:metadata name="DOI"><xsl:value-of select="$doi"/></goobi:metadata>
+                <goobi:metadata name="_doi"><xsl:value-of select="$doi"/></goobi:metadata>
             </xsl:if>
         </goobi:goobi>
     </xsl:template>
@@ -39,7 +39,7 @@
         <goobi:goobi>
             <xsl:copy-of select="./*"/>
             <xsl:if test="not(goobi:metadata[@name='_doi']) and $dmdsec_id = 'DMDLOG_0001'">
-                <goobi:metadata name="DOI"><xsl:value-of select="$doi"/></goobi:metadata>
+                <goobi:metadata name="_doi"><xsl:value-of select="$doi"/></goobi:metadata>
             </xsl:if>
         </goobi:goobi>
     </xsl:template>
