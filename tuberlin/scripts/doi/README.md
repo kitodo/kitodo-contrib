@@ -83,4 +83,12 @@ Examples:
 ```
 Additionally, every DocStructType that is a topStruct should be extended with the DOI field. 
 
-If a different InternalName is used, this also has to be changed in `doi2mets.xsl`, where the DOI ist written to the internal Mets/Mods file. 
+If a different InternalName is used, this also has to be changed in `doi2mets.xsl`, where the DOI ist written to the internal Mets/Mods file.
+Futhermore, it must be changed in the doi_creation.sh script, where it is checked if the Mets/Mods file already contains a doi.
+
+## Calling the script in Kitodo.Production
+
+The script should be called in a script step in Kitodo.Production. Add a task to a process template, check 'Script step' and set something like this as script path:
+```
+/bin/bash /path/to/scripts/doi_creation.sh {processid} {processpath} {$(meta.CatalogIDDigital)}
+```
