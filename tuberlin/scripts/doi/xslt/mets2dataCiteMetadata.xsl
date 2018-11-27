@@ -72,15 +72,12 @@
                 According to DataCite recommendations, "The Title field may be used to convey the approximate or
                 known date of the original object."
                 Thus, if there is a PublicationYear, we add it to the title.
+                The PublicationYear may for this purpose also be approximate, i.e. contain brackets etc.
 
                 If there is no title, we use the machine readable property (:unas) "value unassigned (e.g., Untitled)"
             -->
             <xsl:variable name="pubyear">
-                <xsl:call-template name="getYear">
-                    <xsl:with-param name="date">
-                        <xsl:value-of select="//mets:dmdSec[@ID=$dmdsec_id]/mets:mdWrap/mets:xmlData/mods:mods/mods:extension/goobi:goobi/goobi:metadata[@name='PublicationYear']"/>
-                    </xsl:with-param>
-                </xsl:call-template>
+                <xsl:value-of select="//mets:dmdSec[@ID=$dmdsec_id]/mets:mdWrap/mets:xmlData/mods:mods/mods:extension/goobi:goobi/goobi:metadata[@name='PublicationYear']"/>
             </xsl:variable>
             <titles>
                 <title>
@@ -196,10 +193,18 @@
             </xsl:if>
 
             <!-- Original publication year: date issued -->
-            <xsl:if test="$pubyear != ''" >
+            <xsl:variable name="dateIssued">
+                <xsl:call-template name="getYear">
+                    <xsl:with-param name="date">
+                        <xsl:value-of select="//mets:dmdSec[@ID=$dmdsec_id]/mets:mdWrap/mets:xmlData/mods:mods/mods:extension/goobi:goobi/goobi:metadata[@name='PublicationYear']"/>
+                    </xsl:with-param>
+                </xsl:call-template>
+            </xsl:variable>
+
+            <xsl:if test="$dateIssued != ''" >
                 <dates>
                     <date dateType="Issued">
-                        <xsl:value-of select="$pubyear"/>
+                        <xsl:value-of select="$dateIssued"/>
                     </date>
                 </dates>
             </xsl:if>
@@ -284,9 +289,16 @@
 
     <xsl:template name="getYear">
         <xsl:param name="date"/>
-        <xsl:if test="string-length($date) >= 4 and number(substring(date, 1, 4)) != 'NaN'" >
-            <xsl:value-of select="substring($date, 1, 4)"/>
-        </xsl:if>
+        <xsl:choose>
+            <xsl:when test="starts-with($date, '[') and string-length($date) >= 5 and number(substring($date, 2, 4)) = substring($date, 2, 4)">
+                <xsl:value-of select="substring($date, 2, 4)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="string-length($date) >= 4 and number(substring($date, 1, 4)) = substring($date, 1, 4)" >
+                    <xsl:value-of select="substring($date, 1, 4)"/>
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
 </xsl:stylesheet>
