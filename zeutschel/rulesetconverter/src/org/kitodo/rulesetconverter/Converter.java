@@ -37,8 +37,16 @@ public class Converter {
 	Preferences rulesetNS = new Preferences(Namespaces.namespaceOf(inRuleset.getType()));
 
 	// convert all projects
-	for (Node proj : projectsConfig.getByType(projectsNS.PROJECT).nodes()) {
-	    String project = proj.get(projectsNS.NAME).literal().getValue();
+	Set<String> projectNames = new HashSet<>();
+	for (Node project : projectsConfig.getByType(projectsNS.PROJECT).nodes()) {
+	    projectNames.add(project.get(projectsNS.NAME).literal().getValue());
+	}
+	for (Node project : collections.getByType(collectionsNS.PROJECT).nodes()) {
+	    for (Node name : project.getByType(collectionsNS.NAME).nodes()) {
+		projectNames.add(name.get(RDF_1).literal().getValue());
+	    }
+	}
+	for (String project : projectNames) {
 	    System.out.println("Konvertiere Projekt " + project + "...");
 
 	    // create data
@@ -575,10 +583,11 @@ public class Converter {
 	Node collList = null;
 	// gehe die Projekte durch ob es ein solches gibt
 	for (Node proj : collections.getByType(collectionsNS.PROJECT).nodes()) {
-	    String name = proj.getByType(collectionsNS.NAME).node().get(RDF_1).literal().getValue();
-	    if (name.equals(project)) {
-		collList = proj;
-		break;
+	    for (Node name : proj.getByType(collectionsNS.NAME).nodes()) {
+		if (name.get(RDF_1).literal().getValue().equals(project)) {
+		    collList = proj;
+		    break;
+		}
 	    }
 	}
 	// sonst die defaults nehmen
@@ -705,11 +714,13 @@ public class Converter {
 		    List<String> innerDoctypes = Arrays.asList(outerDoctype);
 		    if (firstchild) {
 			innerDoctypes = new ArrayList<>();
-			for (Node permit : divisions.get(outerDoctype).get(Ruleset.RESTRICTION).node()
-				.getByType(Ruleset.PERMIT).nodes()) {
+			Node node = divisions.get(outerDoctype);
+			if(node != null){
+			for (Node permit : node.get(Ruleset.RESTRICTION).node().getByType(Ruleset.PERMIT).nodes()) {
 			    Result division = permit.get(Ruleset.DIVISION);
 			    if (!division.isAnyLiteral()) continue;
 			    innerDoctypes.add(division.literal().getValue());
+			}
 			}
 		    }
 		    for (String doctype : innerDoctypes) {
@@ -731,26 +742,29 @@ public class Converter {
 			    doctypeDivison.put(Ruleset.RESTRICTION, restrictionNode);
 			    restrictionResult = doctypeDivison.get(Ruleset.RESTRICTION);
 			}
-			Node restrictionNode = restrictionResult.node();
-			for (Node permit : restrictionNode.getByType(Ruleset.PERMIT).nodes()) {
-			    Result permitKey = permit.get(Ruleset.KEY);
-			    if (!permitKey.isAnyLiteral()) continue;
-			    if (!permitKey.literal().getValue().equals(finalMetadataName)) continue;
-			    found = true;
-			    Result minOccursResult = permit.get(Ruleset.MIN_OCCURS);
-			    if (minOccursResult.isAnyLiteral()) {
-				int minOccurs = Integer.parseInt(minOccursResult.literal().getValue());
-				if (minOccurs < (required ? 1 : 0)) minOccurs = (required ? 1 : 0);
-				permit.removeAll(Ruleset.MIN_OCCURS);
-				permit.put(Ruleset.MIN_OCCURS, Integer.toString(minOccurs));
-			    } else if (required) permit.put(Ruleset.MIN_OCCURS, "1");
-			    break;
-			}
-			if (!found) {
-			    Node permit = new MemoryNode(Ruleset.PERMIT);
-			    permit.put(Ruleset.KEY, finalMetadataName);
-			    if (required) permit.put(Ruleset.MIN_OCCURS, "1");
-			    restrictionNode.add(permit);
+			for (Node restrictionNode : restrictionResult.nodes()) {
+			    for (Node permit : restrictionNode
+				    .getByType(Ruleset.PERMIT).nodes()) {
+				Result permitKey = permit.get(Ruleset.KEY);
+				if (!permitKey.isAnyLiteral()) continue;
+				if (!permitKey.literal().getValue().equals(finalMetadataName)) continue;
+				found = true;
+				Result minOccursResult = permit.get(Ruleset.MIN_OCCURS);
+				if (minOccursResult.isAnyLiteral()) {
+				    int minOccurs = Integer.parseInt(minOccursResult.literal().getValue());
+				    if (minOccurs < (required ? 1 : 0))
+					minOccurs = (required ? 1 : 0);
+				    permit.removeAll(Ruleset.MIN_OCCURS);
+				    permit.put(Ruleset.MIN_OCCURS, Integer.toString(minOccurs));
+				} else if (required) permit.put(Ruleset.MIN_OCCURS, "1");
+				break;
+			    }
+			    if (!found) {
+				Node permit = new MemoryNode(Ruleset.PERMIT);
+				permit.put(Ruleset.KEY, finalMetadataName);
+				if (required) permit.put(Ruleset.MIN_OCCURS, "1");
+				restrictionNode.add(permit);
+			    }
 			}
 		    }
 		}
