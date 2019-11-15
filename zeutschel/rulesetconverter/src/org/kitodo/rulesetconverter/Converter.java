@@ -967,9 +967,19 @@ public class Converter {
     void addCreateStage(String project, Node projectsConfig, Projects projectsNS, Map<String, Node> keys,
 	    Map<String, Node> stages) throws LinkedDataException {
 	Set<String> allowed = new HashSet<>();
+	Node foundProject = null;
 	for (Node proj : projectsConfig.getByType(projectsNS.PROJECT).nodes()) {
 	    if (!project.equals(proj.get(projectsNS.NAME).literal().getValue())) continue;
-	    Node itemlist = proj.getByType(projectsNS.CREATE_NEW_PROCESS).node().getByType(projectsNS.ITEMLIST).node();
+	    else { foundProject = proj; break ; }
+	}
+	if(foundProject == null){
+	    for (Node proj : projectsConfig.getByType(projectsNS.PROJECT).nodes()) {
+		if (!"default".equals(proj.get(projectsNS.NAME).literal().getValue())) continue;
+		else { foundProject = proj; break ; }
+	    }
+	}
+	if(foundProject != null) {
+	    Node itemlist = foundProject.getByType(projectsNS.CREATE_NEW_PROCESS).node().getByType(projectsNS.ITEMLIST).node();
 	    for (Node item : itemlist.getByType(projectsNS.ITEM).nodes()) {
 		Result metadata = item.get(projectsNS.METADATA);
 		if (metadata.isAnyLiteral()) allowed.add(metadata.literal().getValue());
