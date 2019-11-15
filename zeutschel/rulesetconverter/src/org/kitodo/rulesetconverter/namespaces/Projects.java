@@ -27,20 +27,20 @@ public class Projects {
     public final String NAMESPACE;
 
     public Projects(String namespace) {
-	NAMESPACE = namespace;
-	CREATE_NEW_PROCESS = new MemoryNodeReference(Namespaces.concat(namespace, "createNewProcess"));
-	DOCSTRUCT = new MemoryNodeReference(Namespaces.concat(namespace, "docstruct"));
-	FROM = new MemoryNodeReference(Namespaces.concat(namespace, "from"));
-	ISDOCTYPE = new MemoryNodeReference(Namespaces.concat(namespace, "isdoctype"));
-	ISNOTDOCTYPE = new MemoryNodeReference(Namespaces.concat(namespace, "isnotdoctype"));
-	ITEM = new MemoryNodeReference(Namespaces.concat(namespace, "item"));
-	ITEMLIST = new MemoryNodeReference(Namespaces.concat(namespace, "itemlist"));
-	LABEL = new MemoryNodeReference(Namespaces.concat(namespace, "label"));
-	METADATA = new MemoryNodeReference(Namespaces.concat(namespace, "metadata"));
-	NAME = new MemoryNodeReference(Namespaces.concat(namespace, "name"));
-	PROJECT = new MemoryNodeReference(Namespaces.concat(namespace, "project"));
-	REQUIRED = new MemoryNodeReference(Namespaces.concat(namespace, "required"));
-	SELECT = new MemoryNodeReference(Namespaces.concat(namespace, "select"));
-	UGHBINDING = new MemoryNodeReference(Namespaces.concat(namespace, "ughbinding"));
+        NAMESPACE = namespace;
+        CREATE_NEW_PROCESS = new MemoryNodeReference(Namespaces.concat(namespace, "createNewProcess"));
+        DOCSTRUCT = new MemoryNodeReference(Namespaces.concat(namespace, "docstruct"));
+        FROM = new MemoryNodeReference(Namespaces.concat(namespace, "from"));
+        ISDOCTYPE = new MemoryNodeReference(Namespaces.concat(namespace, "isdoctype"));
+        ISNOTDOCTYPE = new MemoryNodeReference(Namespaces.concat(namespace, "isnotdoctype"));
+        ITEM = new MemoryNodeReference(Namespaces.concat(namespace, "item"));
+        ITEMLIST = new MemoryNodeReference(Namespaces.concat(namespace, "itemlist"));
+        LABEL = new MemoryNodeReference(Namespaces.concat(namespace, "label"));
+        METADATA = new MemoryNodeReference(Namespaces.concat(namespace, "metadata"));
+        NAME = new MemoryNodeReference(Namespaces.concat(namespace, "name"));
+        PROJECT = new MemoryNodeReference(Namespaces.concat(namespace, "project"));
+        REQUIRED = new MemoryNodeReference(Namespaces.concat(namespace, "required"));
+        SELECT = new MemoryNodeReference(Namespaces.concat(namespace, "select"));
+        UGHBINDING = new MemoryNodeReference(Namespaces.concat(namespace, "ughbinding"));
     }
 }

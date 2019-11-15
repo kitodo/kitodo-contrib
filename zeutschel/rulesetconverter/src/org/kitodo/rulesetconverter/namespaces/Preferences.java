@@ -24,17 +24,17 @@ public class Preferences {
     public final String NAMESPACE;
 
     public Preferences(String namespace) {
-	NAMESPACE = namespace;
-	ALLOWEDCHILDTYPE = new MemoryNodeReference(Namespaces.concat(namespace, "allowedchildtype"));
-	DEFAULT_DISPLAY = new MemoryNodeReference(Namespaces.concat(namespace, "DefaultDisplay"));
-	DOC_STRCT_TYPE = new MemoryNodeReference(Namespaces.concat(namespace, "DocStrctType"));
-	GROUP = new MemoryNodeReference(Namespaces.concat(namespace, "Group"));
-	LANGUAGE = new MemoryNodeReference(Namespaces.concat(namespace, "language"));
-	METADATA = new MemoryNodeReference(Namespaces.concat(namespace, "metadata"));
-	METADATA_TYPE = new MemoryNodeReference(Namespaces.concat(namespace, "MetadataType"));
-	LOWERCASE_NAME = new MemoryNodeReference(Namespaces.concat(namespace, "name"));
-	TITLECASE_NAME = new MemoryNodeReference(Namespaces.concat(namespace, "Name"));
-	NUM = new MemoryNodeReference(Namespaces.concat(namespace, "num"));
-	TYPE = new MemoryNodeReference(Namespaces.concat(namespace, "type"));
+        NAMESPACE = namespace;
+        ALLOWEDCHILDTYPE = new MemoryNodeReference(Namespaces.concat(namespace, "allowedchildtype"));
+        DEFAULT_DISPLAY = new MemoryNodeReference(Namespaces.concat(namespace, "DefaultDisplay"));
+        DOC_STRCT_TYPE = new MemoryNodeReference(Namespaces.concat(namespace, "DocStrctType"));
+        GROUP = new MemoryNodeReference(Namespaces.concat(namespace, "Group"));
+        LANGUAGE = new MemoryNodeReference(Namespaces.concat(namespace, "language"));
+        METADATA = new MemoryNodeReference(Namespaces.concat(namespace, "metadata"));
+        METADATA_TYPE = new MemoryNodeReference(Namespaces.concat(namespace, "MetadataType"));
+        LOWERCASE_NAME = new MemoryNodeReference(Namespaces.concat(namespace, "name"));
+        TITLECASE_NAME = new MemoryNodeReference(Namespaces.concat(namespace, "Name"));
+        NUM = new MemoryNodeReference(Namespaces.concat(namespace, "num"));
+        TYPE = new MemoryNodeReference(Namespaces.concat(namespace, "type"));
     }
 }

@@ -23,17 +23,17 @@ public class ProcessProperties {
     public final String NAMESPACE;
 
     public ProcessProperties(String namespace) {
-	NAMESPACE = namespace;
+        NAMESPACE = namespace;
 
-	ACCESS = new MemoryNodeReference(Namespaces.concat(namespace, "access"));
-	DEFAULTVALUE = new MemoryNodeReference(Namespaces.concat(namespace, "defaultvalue"));
-	NAME = new MemoryNodeReference(Namespaces.concat(namespace, "name"));
-	PROJECT = new MemoryNodeReference(Namespaces.concat(namespace, "project"));
-	PROPERTY = new MemoryNodeReference(Namespaces.concat(namespace, "property"));
-	SHOW_PROCESS_GROUP = new MemoryNodeReference(Namespaces.concat(namespace, "showProcessGroup"));
-	SHOW_STEP = new MemoryNodeReference(Namespaces.concat(namespace, "showStep"));
-	TYPE = new MemoryNodeReference(Namespaces.concat(namespace, "type"));
-	VALIDATION = new MemoryNodeReference(Namespaces.concat(namespace, "validation"));
-	VALUE = new MemoryNodeReference(Namespaces.concat(namespace, "value"));
+        ACCESS = new MemoryNodeReference(Namespaces.concat(namespace, "access"));
+        DEFAULTVALUE = new MemoryNodeReference(Namespaces.concat(namespace, "defaultvalue"));
+        NAME = new MemoryNodeReference(Namespaces.concat(namespace, "name"));
+        PROJECT = new MemoryNodeReference(Namespaces.concat(namespace, "project"));
+        PROPERTY = new MemoryNodeReference(Namespaces.concat(namespace, "property"));
+        SHOW_PROCESS_GROUP = new MemoryNodeReference(Namespaces.concat(namespace, "showProcessGroup"));
+        SHOW_STEP = new MemoryNodeReference(Namespaces.concat(namespace, "showStep"));
+        TYPE = new MemoryNodeReference(Namespaces.concat(namespace, "type"));
+        VALIDATION = new MemoryNodeReference(Namespaces.concat(namespace, "validation"));
+        VALUE = new MemoryNodeReference(Namespaces.concat(namespace, "value"));
     }
 }

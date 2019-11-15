@@ -3,7 +3,8 @@
  */
 package org.kitodo.rulesetconverter.namespaces;
 
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
 import org.kitodo.dataaccess.NodeReference;
 
 public enum DisplayRules implements NodeReference {
@@ -24,21 +25,21 @@ public enum DisplayRules implements NodeReference {
     private String identifier;
 
     private DisplayRules(String identifier) {
-	this.identifier = identifier;
+        this.identifier = identifier;
     }
 
     @Override
     public String getIdentifier() {
-	return identifier;
+        return identifier;
     }
 
     @Override
     public RDFNode toRDFNode(Model model, Boolean unused) {
-	return model.createResource(identifier);
+        return model.createResource(identifier);
     }
 
     @Override
     public String toString() {
-	return '↗' + identifier;
+        return '↗' + identifier;
     }
 }
