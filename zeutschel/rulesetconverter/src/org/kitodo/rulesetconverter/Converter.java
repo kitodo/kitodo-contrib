@@ -51,7 +51,15 @@ public class Converter {
 
 	    // create data
 	    Map<String, Node> divisions = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-	    Map<String, Node> keys = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+	    Map<String, Node> keys = new TreeMap<>(new Comparator<String>() {
+
+		    public int compare(String o1, String o2) {
+		        int cmp = o1.compareToIgnoreCase(o2);
+		        if (cmp != 0) return cmp;
+
+		        return o1.compareTo(o2);
+		    }
+	    });
 	    Map<String, Node> stages = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 	    Set<String> m_personKeys = new HashSet<>();
 	    Set<String> m_doctypes = new HashSet<>();
@@ -540,8 +548,9 @@ public class Converter {
 	for (Node newspaper : divisions.values())
 	    if (newspaper.get(opacNS.IS_NEWSPAPER).isAny()) {
 		Node sbd = new MemoryNode(Ruleset.SUBDIVISION_BY_DATE);
-		String yearName = newspaper.get(Ruleset.RESTRICTION).node().get(RDF_1).node().get(Ruleset.DIVISION)
-			.literal().getValue();
+		Result firstRestriction = newspaper.get(Ruleset.RESTRICTION).node().get(RDF_1);
+		if (!firstRestriction.isAnyNode()) return;
+		String yearName = firstRestriction.node().get(Ruleset.DIVISION).literal().getValue();
 		Node year = divisions.get(yearName);
 		removedivisions.put(yearName, true);
 		Node newYear = new MemoryNode(Ruleset.DIVISION);
@@ -644,9 +653,11 @@ public class Converter {
 	    if (!project.equals(proj.get(projectsNS.NAME).literal().getValue())) continue;
 	    Node itemlist = proj.getByType(projectsNS.CREATE_NEW_PROCESS).node().getByType(projectsNS.ITEMLIST).node();
 	    for (Result itemResult : itemlist.getEnumerated()) {
+		if(!itemResult.isAnyNode()) continue;
 		Node item = itemResult.node();
 		if (!item.hasType(projectsNS.ITEM)) continue;
-		String from = item.get(projectsNS.FROM).literal().getValue();
+		Result result = item.get(projectsNS.FROM);
+		String from = result.isAnyLiteral() ? result.literal().getValue() : "prozess";
 		HashSet<String> doctypes = new HashSet<>(m_doctypes);
 		Result isnotdoctype = item.get(projectsNS.ISNOTDOCTYPE);
 		if (isnotdoctype.isAnyLiteral())
