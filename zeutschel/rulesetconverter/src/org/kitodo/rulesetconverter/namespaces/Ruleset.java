@@ -1,3 +1,6 @@
+/*
+ * This file is licensed under GNU General Public License version 3 or later.
+ */
 package org.kitodo.rulesetconverter.namespaces;
 
 import org.apache.jena.rdf.model.*;

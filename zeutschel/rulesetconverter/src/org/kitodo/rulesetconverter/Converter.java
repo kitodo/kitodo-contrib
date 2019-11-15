@@ -1,3 +1,6 @@
+/*
+ * This file is licensed under GNU General Public License version 3 or later.
+ */
 package org.kitodo.rulesetconverter;
 
 import java.io.*;
@@ -11,6 +14,11 @@ import org.kitodo.rulesetconverter.namespaces.*;
 import org.xml.sax.SAXException;
 
 public class Converter {
+    static final Comparator<String> ALPHA_SORT = (o1, o2) -> {
+        int cmp = o1.compareToIgnoreCase(o2);
+        if (cmp != 0) return cmp;
+        return o1.compareTo(o2);
+    };
     static final String DEFAULT_DISPLAY_JUDGING = "http://names.kitodo.org/rulesetconverter#defaultDisplayJudging";
     static final Literal FALSE = new MemoryLiteral("false", XMLSchema.BOOLEAN);
     static final String LEGACYFIELDTYPE = "http://names.kitodo.org/rulesetconverter#legacyfieldtype";
@@ -50,17 +58,9 @@ public class Converter {
 	    System.out.println("Konvertiere Projekt " + project + "...");
 
 	    // create data
-	    Map<String, Node> divisions = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-	    Map<String, Node> keys = new TreeMap<>(new Comparator<String>() {
-
-		    public int compare(String o1, String o2) {
-		        int cmp = o1.compareToIgnoreCase(o2);
-		        if (cmp != 0) return cmp;
-
-		        return o1.compareTo(o2);
-		    }
-	    });
-	    Map<String, Node> stages = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+	    Map<String, Node> divisions = new TreeMap<>(ALPHA_SORT);
+	    Map<String, Node> keys = new TreeMap<>(ALPHA_SORT);
+	    Map<String, Node> stages = new TreeMap<>(ALPHA_SORT);
 	    Set<String> m_personKeys = new HashSet<>();
 	    Set<String> m_doctypes = new HashSet<>();
 	    Map<String, Boolean> removedivisions = new HashMap<>();
@@ -606,7 +606,7 @@ public class Converter {
 	    else return;
 	}
 
-	List<String> all = new ArrayList<>();
+	Set<String> all = new TreeSet<>(ALPHA_SORT);
 	List<String> preselected = new ArrayList<>();
 	for (Node coll : collList.getByType(collectionsNS.DIGITAL_COLLECTION).nodes()) {
 	    String v = coll.get(RDF_1).literal().getValue();
@@ -834,9 +834,13 @@ public class Converter {
 		    default:
 		}
 		// options
+		Set<String> sortedOptions = new TreeSet<>(ALPHA_SORT);
 		for (Node value : property.getByType(propertiesNS.VALUE).nodes()) {
+		    sortedOptions.add(value.get(RDF_1).literal().getValue());
+		}
+		for(String value : sortedOptions) {
 		    Node option = new MemoryNode(Ruleset.OPTION);
-		    option.put(RDF_1, value.get(RDF_1).literal());
+		    option.put(RDF_1, value);
 		    key.add(option);
 		}
 
@@ -944,7 +948,7 @@ public class Converter {
 
     void excludeKeysOnStages(Map<String, Node> keys, Map<String, Node> stages) {
 	for (Node stage : stages.values()) {
-	    Map<String, Node> stageMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+	    Map<String, Node> stageMap = new TreeMap<>(ALPHA_SORT);
 	    for (Node setting : stage.getByType(Ruleset.SETTING).nodes())
 		stageMap.put(setting.get(Ruleset.KEY).literalExpectable().getValue(), setting);
 	    for (Node removeme : stageMap.values())
