@@ -1,0 +1,107 @@
+# Kitodo Production
+
+version: "3.0"
+
+services:
+  build-kitodo:
+    build: 
+      context: "."
+      dockerfile: ./build-kitodo.Dockerfile
+    volumes:
+      - "./builds:/kitodo"
+    depends_on:
+      - build-mariadb
+    environment:
+      JAVA_OPTS: ${JAVA_OPTS--Djava.awt.headless=true -Xmx2048m}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-kitodo}
+      MYSQL_USER: ${MYSQL_USER:-kitodo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-kitodo}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-mysql_root_pass}
+      MYSQL_HOST: ${MYSQL_HOST:-build-mariadb}
+
+  build-mariadb:
+    build: 
+      context: "."
+      dockerfile: ./build-mariadb.Dockerfile
+    volumes:
+      - dbb-data:/var/lib/mysql
+    ports:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-mysql_root_pass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-kitodo}
+      MYSQL_USER: ${MYSQL_USER:-kitodo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-kitodo}
+  
+  run-kitodo:
+    build: 
+      context: "."
+      dockerfile: ./run-kitodo.Dockerfile
+      args:
+        - "KITODO_BUILD"
+        - "MYSQL_DATABASE=kitodo"
+        - "MYSQL_USER=kitodo"
+        - "MYSQL_PASSWORD=kitodo"
+        - "MYSQL_HOST=run-mariadb"
+    depends_on:
+      - run-mariadb
+      - elasticsearch
+    volumes:
+      - kitodo-data:/usr/local/kitodo
+    ports:
+      - "8089:8080"
+    environment:
+      JAVA_OPTS: ${JAVA_OPTS--Djava.awt.headless=true -Xmx2048m}
+      
+  run-mariadb:
+    build: 
+      context: "."
+      dockerfile: ./run-mariadb.Dockerfile
+      args:
+        - KITODO_BUILD
+    volumes:
+      - dbr-data:/var/lib/mysql
+    ports:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-mysql_root_pass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-kitodo}
+      MYSQL_USER: ${MYSQL_USER:-kitodo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-kitodo}
+  
+  # https://www.elastic.co/guide/en/elasticsearch/reference/5.6/docker.html
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.13
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    environment:
+      discovery.type: single-node  # changing this will require further changes, see referenced docs
+      xpack.security.enabled: "false"  
+      
+  ubuntu-build:
+    image: ubuntu
+    depends_on:
+      - build-mariadb
+    volumes:
+      - dbr-data:/var/lib/mysql
+    
+  ubuntu-build:
+    image: ubuntu
+    depends_on:
+      - run-mariadb
+    volumes:
+      - dbr-data:/var/lib/mysql
+      - "./builds:/build-kitodos"
+    environment:
+      JAVA_OPTS: ${JAVA_OPTS--Djava.awt.headless=true -Xmx2048m}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-kitodo}
+      MYSQL_USER: ${MYSQL_USER:-kitodo}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-kitodo}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-mysql_root_pass}
+      MYSQL_HOST: ${MYSQL_HOST:-run-mariadb}
+    
+volumes:
+  dbb-data:
+  dbr-data:
+  es-data:
+  kitodo-data:

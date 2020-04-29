@@ -1,0 +1,15 @@
+# MariaDB config file for building and running Kitodo
+
+# Inserted according to instruction on
+# https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung-f%C3%BCr-Kitodo.Production-3.x
+# (section A6. Configure MySQL)
+# However, it's not clearly stated whether it really should be on and why...
+[mysqld]
+innodb_file_per_table=ON
+# Inserted according to https://stackoverflow.com/a/57465099/10324488
+# Kitodo DB contains some varchar fields with length 255. Creating an index on
+# them fails as max index size is 767 byte < 4*255. With the settings below
+# the index size is altered to ~3000.
+innodb_file_format=barracuda
+innodb_large_prefix=ON
+innodb_default_row_format='DYNAMIC'
