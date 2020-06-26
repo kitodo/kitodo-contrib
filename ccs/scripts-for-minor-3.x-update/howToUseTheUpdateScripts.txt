@@ -1,0 +1,27 @@
+The update scripts provided here help to perform minor updates on Kitodo 3.*
+according to https://github.com/kitodo/kitodo-production/issues/3396.
+The scripts support (nearly) each step described there, plus some additional (optional) parts.
+
+Preconditions:
+- Have available new version of modules jars in form of "modules.zip"
+- Have available new WAR file
+- Have available SQL-Script with updates to be performed in the database
+
+Steps to follow:
+1) saveConfigBeforeMinorUpdate
+2) optional: saveMessagesBeforeMinorUpdate
+3) saveModulesBeforeMinorUpdate
+4) saveWARBeforeMinorUpdate
+5) optional: saveDatabaseBeforeMinorUpdate
+6) performDatabaseUpdateAsPartOfMinorUpdate
+7) Optional: Delete Elastic Search Index according to description on GitHub
+   I never have done this at this point of time, but made it via the Kitodo User-Interface (step 13), after everything was installed
+8) installModulesAsPartOfMinorUpdate
+9) installMessagesAsPartOfMinorUpdate
+10) installWARAsPartOfMinorUpdate
+11) restoreConfigAfterMinorUpdate
+12) start tomcat8
+13) login to Kitodo and delete&re-create Index
+
+Hint: If the WAR-files is named like "kitodo-something.war", the website has the same name: myserver.com:8080/kitodo-something 
+  
