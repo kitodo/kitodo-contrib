@@ -62,6 +62,7 @@ echo "Exporting database $mysqldb ..."
 mysqldump --add-drop-table -u $mysqluser  $mysqldb > $tempexportfile
 gzip $tempexportfile
 mv $tempexportfile.gz $destDir/$filename-database.gz
+echo "Export file created: $destDir/$filename-database.gz"
 
 echo "... work done!"
 echo ""

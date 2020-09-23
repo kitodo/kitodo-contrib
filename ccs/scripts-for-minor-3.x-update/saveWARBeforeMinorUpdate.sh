@@ -80,6 +80,9 @@ ls *.war | xargs rm
 echo "Delete deployed data in" $dirToTar
 ls -d */ | grep -v ROOT | xargs rm -R
 
+echo "Removing somehow weird file '0' in webapps folder ..."
+rm $tomcatWebApps/0
+
 
 cd $rememberpwd
 
