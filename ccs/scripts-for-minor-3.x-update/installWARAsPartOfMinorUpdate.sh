@@ -53,26 +53,14 @@ echo "starting tomcat ..."
 service tomcat8 start
 echo ""
 
-echo "waiting for deployment done ..."
-deploymentDone=0
-while [ $deploymentDone != 1 ]
-do
-	searchForDeployment="$(tail $tomcatLogFile | grep Deployment | wc -l)"
-	if [ "$searchForDeployment" != 0 ]
-	then
-		echo "done"
-		deploymentDone=1
-	else
-		echo "wait"
-		sleep 2
-	fi
-done
+echo "waiting 30s for a basic deployment ..."
+sleep 30
 echo ""
 
-echo "stopping Tomcat again ..."
+echo "stopping Tomcat ..."
 service tomcat8 stop
 echo ""
 
-echo "... work done!"
+echo "... work done! (Part 1)"
 echo ""
 

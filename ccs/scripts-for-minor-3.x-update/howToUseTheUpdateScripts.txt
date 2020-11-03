@@ -20,7 +20,7 @@ Steps to follow:
 9) installMessagesAsPartOfMinorUpdate
 10) installWARAsPartOfMinorUpdate
 11) restoreConfigAfterMinorUpdate
-12) start tomcat8
+12) installWARAsPartOfMinorUpdatePart2
 13) login to Kitodo and delete&re-create Index
 
 Hint: If the WAR-files is named like "kitodo-something.war", the website has the same name: myserver.com:8080/kitodo-something 
