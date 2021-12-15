@@ -1,0 +1,91 @@
+version: "3.9"
+services:
+
+    kitodo-dev-mysql:
+        image: mysql:${MYSQL_VERSION} 
+        container_name: ${COMPOSE_PROJECT_NAME}-mysql
+        volumes:
+          - ./data/${COMPOSE_PROJECT_NAME}/services/mysql:/var/lib/mysql
+        environment:
+          MYSQL_ROOT_PASSWORD: 1234
+          MYSQL_DATABASE: kitodo
+          MYSQL_USER: kitodo
+          MYSQL_PASSWORD: kitodo
+        ports:
+          - 3306:3306
+          
+    kitodo-dev-elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
+        container_name: "${COMPOSE_PROJECT_NAME}-elasticsearch"
+ #      volumes:
+ #         - ./data/${COMPOSE_PROJECT_NAME}/services/elasticsearch:/usr/share/elasticsearch/data
+        environment:
+            - bootstrap.memory_lock=true
+            - discovery.type=single-node
+            - "ES_JAVA_OPTS=-Xms8192m -Xmx8192m"
+            - cluster.name=kitodo
+            - node.name=kitodo-1
+        ports:
+            - 9200:9200
+            - 9300:9300
+        networks:
+            - elastic
+           
+    kitodo-dev-openldap:
+        image: osixia/openldap:${OPENLDAP_VERSION}
+        container_name: ${COMPOSE_PROJECT_NAME}-openldap
+        hostname: openldap
+        volumes:
+            - ./data/${COMPOSE_PROJECT_NAME}/services/openldap/db:/var/lib/ldap
+            - ./data/${COMPOSE_PROJECT_NAME}/services/openldap/config:/etc/ldap/slapd.d
+        environment:
+            - LDAP_ORGANISATION=Kitodo Dev
+            - LDAP_DOMAIN=kitodo.dev
+            - LDAP_ADMIN_USERNAME=admin
+            - LDAP_ADMIN_PASSWORD=admin_pass
+            - LDAP_CONFIG_PASSWORD=config_pass
+            - "LDAP_BASE_DN=dc=kitodo,dc=dev"
+            - LDAP_READONLY_USER=true
+            - LDAP_READONLY_USER_USERNAME=reader
+            - LDAP_READONLY_USER_PASSWORD=reader_pass
+        ports:
+            - 389:389
+            - 636:636
+        networks:
+            - openldap
+        
+    kitodo-dev-phpldapadmin:        
+        image: osixia/phpldapadmin:latest
+        container_name: ${COMPOSE_PROJECT_NAME}-phpldapadmin
+        hostname: phpldapadmin
+        environment:
+            - PHPLDAPADMIN_LDAP_HOSTS=openldap
+            - PHPLDAPADMIN_HTTPS=false
+        ports:
+            - 6080:80
+        depends_on:
+            - kitodo-dev-openldap
+        networks:
+            - openldap    
+            
+#    kitodo-dev-tomcat:
+#          image: tomcat:${TOMCAT_VERSION}
+#          container_name: kitodo-${KITODO_VERSION}-tomcat
+#          environment:
+  #          - JPDA_ADDRESS=8000
+  #          - JPDA_TRANSPORT=dt_socket
+  #          - JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC -Xmx4G -XX:MaxPermSize=256m"
+#          ports:
+ #           - 8080:8080
+ #           - 8000:8000 
+ #         volumes:
+ #           - ./data/${KITODO_VERSION}/tomcat/logs:/usr/local/tomcat/logs/
+            #- ./data/${KITODO_VERSION}/tomcat/conf/settings.xml:/usr/local/tomcat/conf/settings.xml
+            #- ./data/${KITODO_VERSION}/tomcat/conf/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+  #        entrypoint: /usr/local/tomcat/bin/catalina.sh jpda run
+  
+networks:
+  elastic:
+    driver: bridge  
+  openldap:
+    driver: bridge    
