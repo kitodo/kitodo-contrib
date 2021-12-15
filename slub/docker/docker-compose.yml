@@ -88,4 +88,5 @@ networks:
   elastic:
     driver: bridge  
   openldap:
-    driver: bridge    
+    driver: bridge
+    
