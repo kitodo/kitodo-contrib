@@ -1,6 +1,10 @@
 # Docker
 
-## Prerequisites
+## Usage Docker Image
+
+
+
+## Docker Compose Set
 
 ### Install Docker Engine
 https://docs.docker.com/get-docker/
@@ -8,21 +12,19 @@ https://docs.docker.com/get-docker/
 ### Install Docker Compose
 https://docs.docker.com/compose/install/
 
-## Latest version
+## Prerequisites
 
-Start the container for the current project via the CLI in this folder.
-
+### Starting 
 ```
 docker-compose up -d
 ```
 
-Data of the container volumes are stored under ./data/{PROJEKTNAME}/services/.
-
-
-## Legacy versions
-
-For example, older project versions contain an older version of Elastic Search.
-
+### Stoping 
 ```
-docker-compose --env-file=.env.kitodo-3.3 up -d
+docker-compose stop
+```
+
+### View Logs 
+```
+docker-compose logs -f
 ```
