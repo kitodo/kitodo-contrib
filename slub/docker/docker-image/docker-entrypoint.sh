@@ -1,11 +1,14 @@
 #!/bin/sh
 
-# Database configuration
+# Place environment db variables
 /bin/sed -i "s,\(jdbc:mysql://\)[^/]*\(/.*\),\1${KITODO_DB_HOST}:${KITODO_DB_PORT}\2," ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/hibernate.cfg.xml
-
-# Elasticsearch configuration
 /bin/sed -i "s/kitodo?useSSL=false/${KITODO_DB_NAME}?useSSL=false\&amp;allowPublicKeyRetrieval=true/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/hibernate.cfg.xml
+/bin/sed -i "s/hibernate.connection.username\">kitodo/hibernate.connection.username\">${KITODO_DB_USER}/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/hibernate.cfg.xml
+/bin/sed -i "s/hibernate.connection.password\">kitodo/hibernate.connection.password\">${KITODO_DB_PASSWORD}/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/hibernate.cfg.xml
+
+# Place environment es variables
 /bin/sed -i "s,^\(elasticsearch.host\)=.*,\1=${KITODO_ES_HOST}," ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
+
 
 if [ -z "$(ls -A /usr/local/kitodo)" ]; then
    cp -R /tmp/kitodo/kitodo-config-modules/. /usr/local/kitodo/

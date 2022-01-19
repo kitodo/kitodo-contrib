@@ -36,9 +36,9 @@ ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.s
 RUN	unzip /tmp/kitodo/${KITODO_CONFIG_MODULES_NAME}.zip -x ${KITODO_CONFIG_MODULES_NAME}/scripts/*.bat -d /tmp/kitodo/ && \
 	mv /tmp/kitodo/${KITODO_CONFIG_MODULES_NAME} /tmp/kitodo/kitodo-config-modules/ && \
 	unzip /tmp/kitodo/${KITODO_WAR_NAME}.war -d /tmp/kitodo/kitodo-war && \
-	mv /tmp/kitodo/kitodo-war ${CATALINA_HOME}/webapps/kitodo && \
+	mv /tmp/kitodo/kitodo-war  ${CATALINA_HOME}/webapps/kitodo/ && \
 	mv /tmp/kitodo/${KITODO_SQL_NAME}.sql /tmp/kitodo/kitodo.sql && \
-	rm -f /tmp/kitodo/${KITODO_WAR_NAME} && \
+	rm -f /tmp/kitodo/${KITODO_WAR_NAME}.war && \
 	rm -f /tmp/kitodo/kitodo-config-modules.zip && \
 	chmod +x /tmp/wait-for-it.sh && \
 	chmod +x /docker-entrypoint.sh
