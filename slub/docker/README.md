@@ -10,7 +10,7 @@ The image contains the WAR, the database file and the config modules of the corr
 docker pull markusweigelt/kitodo-production:TAG
 ```
 
-After the container has been started Kitodo.Production can be accessed at http://localhost:8080/kitodo with initial credentials testadmin / test.
+After the container has been started Kitodo.Production can be reached at http://localhost:8080/kitodo with initial credentials testadmin / test.
 
 ### Environment Variables
 
