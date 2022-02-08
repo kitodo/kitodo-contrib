@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+
+    kitodo-schema:
+        image: aikain/simplehttpserver:0.1
+        restart: always
+        ports:
+            - 80:80
+        volumes:
+            - "./schema:/var/www"    
