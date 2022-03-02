@@ -13,6 +13,7 @@ services:
        environment:
         - KITODO_DB_HOST=kitodo-db
         - KITODO_ES_HOST=kitodo-es
+        - KITODO_MQ_HOST=kitodo-mq
 
        depends_on:
         - kitodo-mq
@@ -55,3 +56,8 @@ services:
         ports:
            - "61616:61616"
            - "8161:8161"
+           
+        volumes:   
+           - type: bind
+             source: ./kitodo-activemq.xml
+             target: /opt/activemq/conf/activemq.xml

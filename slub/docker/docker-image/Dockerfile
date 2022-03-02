@@ -14,6 +14,8 @@ ENV KITODO_DB_NAME=kitodo
 ENV KITODO_DB_USER=kitodo
 ENV KITODO_DB_PASSWORD=kitodo
 ENV KITODO_ES_HOST=localhost
+ENV KITODO_MQ_HOST=localhost
+ENV KITODO_MQ_PORT=61616
 
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]

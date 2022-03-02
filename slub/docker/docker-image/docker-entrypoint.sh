@@ -9,6 +9,12 @@
 # Place environment es variables
 /bin/sed -i "s,^\(elasticsearch.host\)=.*,\1=${KITODO_ES_HOST}," ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
 
+# Place environment mq variables
+/bin/sed -i "s/localhost:61616/${KITODO_MQ_HOST}:${KITODO_MQ_PORT}/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
+/bin/sed -i "s/#activeMQ.hostURL=/activeMQ.hostURL=/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
+/bin/sed -i "s/#activeMQ.results.topic=/activeMQ.results.topic=/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
+/bin/sed -i "s/#activeMQ.results.timeToLive=/activeMQ.results.timeToLive=/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
+/bin/sed -i "s/#activeMQ.finalizeStep.queue=/activeMQ.finalizeStep.queue=/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
 
 if [ -z "$(ls -A /usr/local/kitodo)" ]; then
    cp -R /tmp/kitodo/kitodo-config-modules/. /usr/local/kitodo/
