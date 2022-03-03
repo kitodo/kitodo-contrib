@@ -54,8 +54,8 @@ services:
         image: markusweigelt/activemq:latest
         
         ports:
-           - "61616:61616"
-           - "8161:8161"
+           - 61616:61616
+           - 8161:8161
            
         volumes:   
            - type: bind

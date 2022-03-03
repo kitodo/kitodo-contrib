@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y \
 	net-tools \
 	nano \
 	unzip \
+	dos2unix \
 	mariadb-client \
 	--no-install-recommends
 
@@ -43,7 +44,9 @@ RUN	unzip /tmp/kitodo/${KITODO_CONFIG_MODULES_NAME}.zip -x ${KITODO_CONFIG_MODUL
 	rm -f /tmp/kitodo/${KITODO_WAR_NAME}.war && \
 	rm -f /tmp/kitodo/kitodo-config-modules.zip && \
 	chmod +x /tmp/wait-for-it.sh && \
-	chmod +x /docker-entrypoint.sh
+	chmod +x /docker-entrypoint.sh && \
+	dos2unix /tmp/kitodo/kitodo-config-modules/scripts/*.sh && \
+	chmod 544 /tmp/kitodo/kitodo-config-modules/scripts/*.sh
 	
 EXPOSE 8080
 
