@@ -1,4 +1,10 @@
 #!/bin/sh
+cat /id_rsa >> /.ssh/id_rsa
+
+# removes read/write/execute permissions from group and others, but preserves whatever permissions the owner had
+chmod go-rwx /.ssh/*
+
+ssh-keyscan -H ${OCRD_MANAGER%:*} >> /.ssh/known_hosts
 
 # Place environment db variables
 /bin/sed -i "s,\(jdbc:mysql://\)[^/]*\(/.*\),\1${KITODO_DB_HOST}:${KITODO_DB_PORT}\2," ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/hibernate.cfg.xml

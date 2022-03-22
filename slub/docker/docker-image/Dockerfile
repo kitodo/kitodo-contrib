@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
 	unzip \
 	dos2unix \
 	mariadb-client \
+	openssh-client \
 	--no-install-recommends
 
 ADD https://github.com/kitodo/kitodo-production/releases/download/kitodo-production-${KITODO_VERSION}/${KITODO_WAR_NAME}.war /tmp/kitodo/
@@ -46,7 +47,8 @@ RUN	unzip /tmp/kitodo/${KITODO_CONFIG_MODULES_NAME}.zip -x ${KITODO_CONFIG_MODUL
 	chmod +x /tmp/wait-for-it.sh && \
 	chmod +x /docker-entrypoint.sh && \
 	dos2unix /tmp/kitodo/kitodo-config-modules/scripts/*.sh && \
-	chmod 544 /tmp/kitodo/kitodo-config-modules/scripts/*.sh
+	chmod 544 /tmp/kitodo/kitodo-config-modules/scripts/*.sh && \
+	mkdir /.ssh
 	
 EXPOSE 8080
 
