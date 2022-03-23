@@ -20,13 +20,17 @@ ENV KITODO_MQ_PORT=61616
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && \
+    apt-get install -y \
+	apt-utils \
 	net-tools \
 	nano \
 	unzip \
 	dos2unix \
 	mariadb-client \
 	openssh-client \
+	imagemagick \
+	rsyslog \
 	--no-install-recommends
 
 ADD https://github.com/kitodo/kitodo-production/releases/download/kitodo-production-${KITODO_VERSION}/${KITODO_WAR_NAME}.war /tmp/kitodo/
@@ -52,4 +56,5 @@ RUN	unzip /tmp/kitodo/${KITODO_CONFIG_MODULES_NAME}.zip -x ${KITODO_CONFIG_MODUL
 	
 EXPOSE 8080
 
-CMD ["catalina.sh", "run"]
+# make apt run interactive during logins
+ENV DEBIAN_FRONTEND teletype

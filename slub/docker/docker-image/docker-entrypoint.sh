@@ -22,6 +22,9 @@ ssh-keyscan -H ${OCRD_MANAGER%:*} >> /.ssh/known_hosts
 /bin/sed -i "s/#activeMQ.results.timeToLive=/activeMQ.results.timeToLive=/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
 /bin/sed -i "s/#activeMQ.finalizeStep.queue=/activeMQ.finalizeStep.queue=/g" ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/kitodo_config.properties
 
+# Replace imklog to prevent starting problems of rsyslog
+/bin/sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
+
 if [ -z "$(ls -A /usr/local/kitodo)" ]; then
    cp -R /tmp/kitodo/kitodo-config-modules/. /usr/local/kitodo/
 fi
@@ -34,5 +37,12 @@ echo "SELECT 1 FROM user LIMIT 1;" \
     | mysql -h "${KITODO_DB_HOST}" -P "${KITODO_DB_PORT}" -u ${KITODO_DB_USER} --password=${KITODO_DB_PASSWORD} ${KITODO_DB_NAME} >/dev/null 2>&1 \
     || mysql -h "${KITODO_DB_HOST}" -P "${KITODO_DB_PORT}" -u ${KITODO_DB_USER} --password=${KITODO_DB_PASSWORD} ${KITODO_DB_NAME} < /tmp/kitodo/kitodo.sql
 
-# Run CMD
-"$@"
+
+# start syslog 
+service rsyslog start
+
+# run tomcat
+/usr/local/tomcat/bin/catalina.sh run
+
+sleep 1
+tail -f /var/log/syslog
