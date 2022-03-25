@@ -17,8 +17,8 @@ ENV KITODO_ES_HOST=localhost
 ENV KITODO_MQ_HOST=localhost
 ENV KITODO_MQ_PORT=61616
 
-COPY docker-entrypoint.sh /
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# make apt run non-interactive during build
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
@@ -32,6 +32,13 @@ RUN apt-get update && \
 	imagemagick \
 	rsyslog \
 	--no-install-recommends
+
+COPY tomcat.conf /etc/rsyslog.d/
+COPY startup.sh /usr/bin/
+
+RUN mkdir /.ssh && \
+	cat > /etc/ssh/ssh_known_hosts && \
+	dos2unix /usr/bin/startup.sh
 
 ADD https://github.com/kitodo/kitodo-production/releases/download/kitodo-production-${KITODO_VERSION}/${KITODO_WAR_NAME}.war /tmp/kitodo/
 
@@ -49,12 +56,16 @@ RUN	unzip /tmp/kitodo/${KITODO_CONFIG_MODULES_NAME}.zip -x ${KITODO_CONFIG_MODUL
 	rm -f /tmp/kitodo/${KITODO_WAR_NAME}.war && \
 	rm -f /tmp/kitodo/kitodo-config-modules.zip && \
 	chmod +x /tmp/wait-for-it.sh && \
-	chmod +x /docker-entrypoint.sh && \
 	dos2unix /tmp/kitodo/kitodo-config-modules/scripts/*.sh && \
-	chmod 544 /tmp/kitodo/kitodo-config-modules/scripts/*.sh && \
-	mkdir /.ssh
+	chmod 544 /tmp/kitodo/kitodo-config-modules/scripts/*.sh
+
+CMD ["/usr/bin/startup.sh"]	
 	
 EXPOSE 8080
 
 # make apt run interactive during logins
 ENV DEBIAN_FRONTEND teletype
+
+
+
+

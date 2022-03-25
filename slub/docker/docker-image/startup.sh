@@ -1,10 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 cat /id_rsa >> /.ssh/id_rsa
 
 # removes read/write/execute permissions from group and others, but preserves whatever permissions the owner had
 chmod go-rwx /.ssh/*
 
-ssh-keyscan -H ${OCRD_MANAGER%:*} >> /.ssh/known_hosts
+# Add ocrd manager as global known_hosts if env exist
+if [ -n "${OCRD_MANAGER%:*}" ]; then
+	ssh-keygen -R ${OCRD_MANAGER%:*} -f /etc/ssh/ssh_known_hosts
+	ssh-keyscan -H ${OCRD_MANAGER%:*} >> /etc/ssh/ssh_known_hosts
+fi
 
 # Place environment db variables
 /bin/sed -i "s,\(jdbc:mysql://\)[^/]*\(/.*\),\1${KITODO_DB_HOST}:${KITODO_DB_PORT}\2," ${CATALINA_HOME}/webapps/kitodo/WEB-INF/classes/hibernate.cfg.xml
@@ -25,24 +29,28 @@ ssh-keyscan -H ${OCRD_MANAGER%:*} >> /.ssh/known_hosts
 # Replace imklog to prevent starting problems of rsyslog
 /bin/sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
 
+# Add tomcat logging to syslog on line 23
+/bin/sed -i '23i module(load="imfile" PollingInterval="10")' /etc/rsyslog.conf
+
+
 if [ -z "$(ls -A /usr/local/kitodo)" ]; then
    cp -R /tmp/kitodo/kitodo-config-modules/. /usr/local/kitodo/
 fi
 
-# Wait for database container
+echo "Wait for database container."
 /tmp/wait-for-it.sh -t 0 ${KITODO_DB_HOST}:${KITODO_DB_PORT}
 
-# Initialize database if necessary
+echo "Initalize database."
 echo "SELECT 1 FROM user LIMIT 1;" \
     | mysql -h "${KITODO_DB_HOST}" -P "${KITODO_DB_PORT}" -u ${KITODO_DB_USER} --password=${KITODO_DB_PASSWORD} ${KITODO_DB_NAME} >/dev/null 2>&1 \
     || mysql -h "${KITODO_DB_HOST}" -P "${KITODO_DB_PORT}" -u ${KITODO_DB_USER} --password=${KITODO_DB_PASSWORD} ${KITODO_DB_NAME} < /tmp/kitodo/kitodo.sql
 
-
-# start syslog 
+echo "Starting rsyslog."
 service rsyslog start
 
-# run tomcat
-/usr/local/tomcat/bin/catalina.sh run
+sleep 2
 
-sleep 1
+echo "Starting tomcat."
+/usr/local/tomcat/bin/catalina.sh start 
+
 tail -f /var/log/syslog
