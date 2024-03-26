@@ -24,12 +24,11 @@ import static java.lang.System.exit;
 import java.lang.reflect.*;
 import java.util.*;
 
-import javax.jms.*; 
+import javax.jms.*;
 import static javax.jms.Session.AUTO_ACKNOWLEDGE;
 
 import org.apache.activemq.*;
 import org.apache.activemq.command.*;
-
 
 public class RunKitodoScript {
     static final int EXIT_OK = 0;
