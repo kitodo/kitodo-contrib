@@ -9,26 +9,28 @@
  */
 package org.kitodo.contrib.mik_center.activemq;
 
+/* Dependencies:
+ *   •  geronimo-jms_1.1_spec
+ *   •  geronimo-j2ee-management_1.1_spec
+ *   •  activemq-core
+ *   •  log4j-api
+ *   •  log4j-core
+ *   •  log4j-slf4j-impl
+ *   •  slf4j-api
+ */
+
 import static java.lang.System.out;
 import static java.lang.System.exit;
 import java.lang.reflect.*;
 import java.util.*;
 
-// from geronimo-jms_1.1_spec-1.1.1.jar
 import javax.jms.*; 
 import static javax.jms.Session.AUTO_ACKNOWLEDGE;
 
-// from activemq-client-5.17.6.jar
 import org.apache.activemq.*;
 import org.apache.activemq.command.*;
 
 
-/* Parameters: Active MQ host, queue name, Kitodo-Script command, [process-id,
- *             [process-id, [process-id, [...
- * 
- * Example: "tcp://localhost:61616" "KitodoProduction.KitodoScript.Queue"
- *          "action:exportDms exportImages:true" 42
- */
 public class RunKitodoScript {
     static final int EXIT_OK = 0;
     static final int EXIT_USAGE = 64;
@@ -37,6 +39,12 @@ public class RunKitodoScript {
 
     static final boolean NON_TRANSACTED = false;
 
+    /* Parameters: Active MQ host, queue name, Kitodo-Script command, [process-id,
+     *             [process-id, [process-id, [...
+     * 
+     * Example: "tcp://localhost:61616" "KitodoProduction.KitodoScript.Queue"
+     *          "action:exportDms exportImages:true" 42
+     */
     public static void main(String[] args) {
         try {
             List<String> processes = (args.length > 3)?
